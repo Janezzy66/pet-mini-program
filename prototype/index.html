@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物小程序 - 原型预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 左侧导航栏 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 220px;
+            height: 100vh;
+            background: #FFF9F0;
+            border-right: 1px solid #f0e6d9;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 2px;
+        }
+
+        /* Logo 区域 */
+        .logo {
+            padding: 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid #f0e6d9;
+            background: linear-gradient(135deg, #FFF9F0, #fff3e6);
+        }
+
+        .logo h1 {
+            font-size: 18px;
+            color: #FF9A5C;
+            font-weight: 600;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 导航分组 */
+        .nav-group {
+            padding: 12px 0 4px;
+        }
+
+        .nav-group-title {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #FF9A5C;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 10px 16px 10px 28px;
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #fff3e6;
+            color: #FF9A5C;
+            border-left-color: #FF9A5C;
+        }
+
+        .nav-item.active {
+            background: #FF9A5C;
+            color: #fff;
+            border-left-color: #e8854a;
+            font-weight: 500;
+        }
+
+        /* 右侧内容区 */
+        .content {
+            margin-left: 220px;
+            height: 100vh;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .iframe-wrapper {
+            width: 375px;
+            height: calc(100vh - 40px);
+            max-height: 812px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .iframe-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 0 0 4px 4px;
+            z-index: 10;
+        }
+
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 折叠按钮 */
+        .toggle-btn {
+            position: fixed;
+            top: 12px;
+            left: 224px;
+            width: 28px;
+            height: 28px;
+            background: #FF9A5C;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 154, 92, 0.3);
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 折叠状态 */
+        .sidebar.collapsed {
+            transform: translateX(-220px);
+        }
+
+        .sidebar.collapsed ~ .content {
+            margin-left: 0;
+        }
+
+        .sidebar.collapsed ~ .toggle-btn {
+            left: 12px;
+        }
+
+        /* 当前页面指示器 */
+        .current-page {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(255, 154, 92, 0.9);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 50;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-220px);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .toggle-btn {
+                left: 12px;
+            }
+
+            .sidebar.show ~ .toggle-btn {
+                left: 224px;
+            }
+
+            .iframe-wrapper {
+                width: 100%;
+                border-radius: 0;
+                max-height: none;
+                height: calc(100vh - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <h1>🐾 宠物小程序原型</h1>
+            <p>Prototype Preview</p>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">首页</div>
+            <a class="nav-item active" data-src="home.html" onclick="loadPage(this)">首页</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">宠物管理</div>
+            <a class="nav-item" data-src="pet-list.html" onclick="loadPage(this)">宠物列表</a>
+            <a class="nav-item" data-src="pet-add.html" onclick="loadPage(this)">添加宠物</a>
+            <a class="nav-item" data-src="pet-detail.html" onclick="loadPage(this)">宠物档案</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">周边探索</div>
+            <a class="nav-item" data-src="nearby.html" onclick="loadPage(this)">周边探索</a>
+            <a class="nav-item" data-src="nearby-detail.html" onclick="loadPage(this)">地点详情</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">宠物聚会</div>
+            <a class="nav-item" data-src="party.html" onclick="loadPage(this)">聚会列表</a>
+            <a class="nav-item" data-src="party-detail.html" onclick="loadPage(this)">聚会详情</a>
+            <a class="nav-item" data-src="party-publish.html" onclick="loadPage(this)">发布聚会</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">宠物社区</div>
+            <a class="nav-item" data-src="community.html" onclick="loadPage(this)">社区主页</a>
+            <a class="nav-item" data-src="community-detail.html" onclick="loadPage(this)">内容详情</a>
+            <a class="nav-item" data-src="community-publish.html" onclick="loadPage(this)">发布内容</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">上门喂养</div>
+            <a class="nav-item" data-src="feeding-hall.html" onclick="loadPage(this)">接单大厅</a>
+            <a class="nav-item" data-src="feeding-publish.html" onclick="loadPage(this)">发布订单</a>
+            <a class="nav-item" data-src="feeding-detail.html" onclick="loadPage(this)">订单详情</a>
+            <a class="nav-item" data-src="feeding-checkin.html" onclick="loadPage(this)">喂养打卡</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">个人中心</div>
+            <a class="nav-item" data-src="profile.html" onclick="loadPage(this)">个人中心</a>
+        </div>
+    </nav>
+
+    <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">◀</button>
+
+    <main class="content" id="content">
+        <div class="iframe-wrapper">
+            <iframe id="previewFrame" src="home.html"></iframe>
+        </div>
+    </main>
+
+    <div class="current-page" id="currentPage">当前: 首页</div>
+
+    <script>
+        function loadPage(el) {
+            const src = el.getAttribute('data-src');
+            const name = el.textContent;
+
+            // 更新 iframe
+            document.getElementById('previewFrame').src = src;
+
+            // 更新高亮
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            el.classList.add('active');
+
+            // 更新当前页面指示器
+            document.getElementById('currentPage').textContent = '当前: ' + name;
+
+            // 移动端自动收起导航
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('toggleBtn').textContent = '▶';
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const btn = document.getElementById('toggleBtn');
+            const content = document.getElementById('content');
+
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('show');
+                btn.textContent = sidebar.classList.contains('show') ? '◀' : '▶';
+            } else {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    btn.textContent = '▶';
+                    content.style.marginLeft = '0';
+                    btn.style.left = '12px';
+                } else {
+                    btn.textContent = '◀';
+                    content.style.marginLeft = '220px';
+                    btn.style.left = '224px';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

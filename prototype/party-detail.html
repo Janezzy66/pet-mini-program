@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聚会详情</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #e8e8e8; font-family: -apple-system, "微软雅黑", sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+.page { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.cover { height: 200px; background: linear-gradient(135deg, #FFE8D6, #FFD6B8); display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative; }
+.back-btn { position: absolute; top: 14px; left: 14px; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.content { padding: 20px 16px; }
+.title-section { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.title-section h1 { font-size: 20px; color: #333; font-weight: 700; flex: 1; }
+.status-badge { padding: 4px 12px; background: #E8F8E0; color: #4CAF50; border-radius: 12px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.info-block { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.info-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f5f0ea; font-size: 14px; color: #666; }
+.info-item:last-child { border-bottom: none; }
+.info-icon { font-size: 18px; width: 24px; text-align: center; }
+.host-card { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.host-avatar { width: 48px; height: 48px; background: #FFE8D6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.host-detail { flex: 1; }
+.host-name { font-size: 15px; font-weight: 600; color: #333; }
+.host-pet { font-size: 12px; color: #999; margin-top: 3px; }
+.host-badge { padding: 3px 8px; background: #FF9A5C; color: #fff; border-radius: 12px; font-size: 11px; }
+.section { margin-bottom: 16px; }
+.section h3 { font-size: 15px; color: #333; margin-bottom: 10px; font-weight: 600; }
+.section p { font-size: 14px; color: #666; line-height: 1.8; }
+.participants { display: flex; align-items: center; gap: -6px; margin-bottom: 10px; flex-wrap: wrap; }
+.participant-avatar { width: 36px; height: 36px; background: #FFE8D6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #fff; margin-right: -6px; }
+.participant-more { width: 36px; height: 36px; background: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; border: 2px solid #fff; margin-left: 2px; }
+.participant-hint { font-size: 13px; color: #FF9A5C; margin-top: 10px; }
+.notice-list { list-style: none; counter-reset: notice; }
+.notice-list li { position: relative; padding: 8px 0 8px 28px; font-size: 13px; color: #666; line-height: 1.6; }
+.notice-list li::before { counter-increment: notice; content: counter(notice); position: absolute; left: 0; top: 8px; width: 20px; height: 20px; background: #FF9A5C; color: #fff; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+.bottom-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 48px; background: linear-gradient(135deg, #FF9A5C, #FFD966); color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(255,154,92,0.3); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="cover">
+    <a class="back-btn" href="party.html">←</a>
+    🐕🐕🐕
+  </div>
+  <div class="content">
+    <div class="title-section">
+      <h1>周六金毛聚会！一起撒欢~</h1>
+      <span class="status-badge">报名中</span>
+    </div>
+
+    <div class="info-block">
+      <div class="info-item"><span class="info-icon">📅</span>5月15日 周六 14:00-17:00</div>
+      <div class="info-item"><span class="info-icon">📍</span>朝阳公园南门草坪</div>
+      <div class="info-item"><span class="info-icon">👥</span>参与人数 6/10</div>
+      <div class="info-item"><span class="info-icon">🐕</span>仅限狗狗参与</div>
+    </div>
+
+    <div class="host-card">
+      <div class="host-avatar">🧑</div>
+      <div class="host-detail">
+        <div class="host-name">小明</div>
+        <div class="host-pet">🐕 金毛寻回犬 · 豆豆 · 2岁</div>
+      </div>
+      <span class="host-badge">发起人</span>
+    </div>
+
+    <div class="section">
+      <h3>活动介绍</h3>
+      <p>各位金毛家长们好！我家豆豆特别喜欢和同类一起玩，所以想组织一场金毛专场聚会。朝阳公园南门的草坪很开阔，适合大狗奔跑。大家可以带上狗狗最爱的玩具，一起来社交！现场会准备一些小零食和饮水，也欢迎大家自带分享～</p>
+    </div>
+
+    <div class="section">
+      <h3>参与者</h3>
+      <div class="participants">
+        <div class="participant-avatar">🧑</div>
+        <div class="participant-avatar">👩</div>
+        <div class="participant-avatar">👨</div>
+        <div class="participant-avatar">🧒</div>
+        <div class="participant-avatar">👧</div>
+        <div class="participant-avatar">🧓</div>
+        <div class="participant-more">+4</div>
+      </div>
+      <div class="participant-hint">还差4位小伙伴～快来加入吧！</div>
+    </div>
+
+    <div class="section">
+      <h3>注意事项</h3>
+      <ul class="notice-list">
+        <li>请确保您的狗狗已完成疫苗接种并佩戴牵引绳到场</li>
+        <li>请自备拾便袋，保持草坪整洁</li>
+        <li>有攻击性的狗狗请勿报名，确保所有参与者安全</li>
+        <li>如遇恶劣天气活动将延期，届时群内通知</li>
+        <li>请在活动开始前10分钟到达集合点签到</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bottom-btn">🎉 立即报名</div>
+</div>
+</body>
+</html>

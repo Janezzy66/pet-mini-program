@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的宠物 - 宠物小程序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+    padding: 20px 0;
+  }
+  .phone-frame {
+    width: 375px;
+    min-height: 667px;
+    background: #FFF9F0;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 70px;
+  }
+
+  /* === Nav Bar === */
+  .navbar {
+    background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+    padding: 44px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .navbar .back {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s;
+  }
+  .navbar .back:hover { background: rgba(255,255,255,0.35); }
+  .navbar h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .navbar .pet-count {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    font-size: 12px;
+    color: #fff;
+    background: rgba(255,255,255,0.25);
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* === Pet List === */
+  .pet-list {
+    padding: 16px 20px;
+  }
+  .pet-list-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .pet-list-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,154,92,0.18);
+  }
+  .pet-list-card::after {
+    content: '›';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #ccc;
+  }
+  .card-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFE8D6, #FFD966);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    flex-shrink: 0;
+    border: 3px solid #FFF9F0;
+    box-shadow: 0 2px 10px rgba(255,154,92,0.2);
+    position: relative;
+  }
+  .card-avatar .gender-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 2px solid #fff;
+    font-weight: 700;
+  }
+  .gender-badge.male {
+    background: #7EC8E3;
+    color: #fff;
+  }
+  .gender-badge.female {
+    background: #FFB0C8;
+    color: #fff;
+  }
+  .card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .card-info .name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .card-info .name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+  }
+  .card-info .breed-tag {
+    font-size: 11px;
+    color: #FF9A5C;
+    background: #FFF5EC;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+  .card-info .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #999;
+  }
+  .card-info .detail-row span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  /* personality tags */
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .card-tags .tag {
+    font-size: 10px;
+    color: #7EC8E3;
+    background: #EDF8FF;
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+
+  /* === Floating Add Button === */
+  .fab {
+    position: fixed;
+    bottom: 90px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF9A5C, #FFD966);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255,154,92,0.4);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    z-index: 50;
+    /* position it relative to the phone frame */
+    left: calc(50% + 375px / 2 - 72px);
+  }
+  .fab:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 24px rgba(255,154,92,0.5);
+  }
+
+  /* === TabBar === */
+  .tabbar {
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 0 env(safe-area-inset-bottom, 8px);
+    border-top: 1px solid #f0ebe4;
+    z-index: 100;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: transform 0.2s ease;
+  }
+  .tab-item:hover { transform: scale(1.08); }
+  .tab-item .tab-icon { font-size: 22px; }
+  .tab-item .tab-label { font-size: 10px; color: #999; font-weight: 500; }
+  .tab-item.active .tab-label { color: #FF9A5C; font-weight: 600; }
+  .tab-item.active { position: relative; }
+  .tab-item.active::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: #FF9A5C;
+    border-radius: 2px;
+  }
+
+  /* === Empty hint === */
+  .empty-tip {
+    text-align: center;
+    padding: 40px 20px;
+    color: #ccc;
+    font-size: 14px;
+  }
+
+  /* stagger animation */
+  .pet-list-card {
+    animation: slideUp 0.5s ease both;
+  }
+  .pet-list-card:nth-child(1) { animation-delay: 0.05s; }
+  .pet-list-card:nth-child(2) { animation-delay: 0.15s; }
+  .pet-list-card:nth-child(3) { animation-delay: 0.25s; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- NavBar -->
+  <div class="navbar">
+    <div class="back">‹</div>
+    <h1>我的宠物</h1>
+    <div class="pet-count">共 3 只</div>
+  </div>
+
+  <!-- Pet List -->
+  <div class="pet-list">
+    <!-- Pet 1 -->
+    <div class="pet-list-card">
+      <div class="card-avatar">
+        🐕
+        <span class="gender-badge male">♂</span>
+      </div>
+      <div class="card-info">
+        <div class="name-row">
+          <span class="name">豆豆</span>
+          <span class="breed-tag">金毛犬</span>
+        </div>
+        <div class="detail-row">
+          <span>🎂 3岁</span>
+          <span>⚖️ 28kg</span>
+          <span>✂️ 已绝育</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">活泼</span>
+          <span class="tag">友好</span>
+          <span class="tag">粘人</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 2 -->
+    <div class="pet-list-card">
+      <div class="card-avatar">
+        🐈
+        <span class="gender-badge female">♀</span>
+      </div>
+      <div class="card-info">
+        <div class="name-row">
+          <span class="name">咪咪</span>
+          <span class="breed-tag">英短蓝猫</span>
+        </div>
+        <div class="detail-row">
+          <span>🎂 2岁</span>
+          <span>⚖️ 4.5kg</span>
+          <span>✂️ 已绝育</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">安静</span>
+          <span class="tag">独立</span>
+          <span class="tag">好奇</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pet 3 -->
+    <div class="pet-list-card">
+      <div class="card-avatar">
+        🐕
+        <span class="gender-badge male">♂</span>
+      </div>
+      <div class="card-info">
+        <div class="name-row">
+          <span class="name">团子</span>
+          <span class="breed-tag">柯基犬</span>
+        </div>
+        <div class="detail-row">
+          <span>🎂 1岁</span>
+          <span>⚖️ 11kg</span>
+          <span>✂️ 未绝育</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">活泼</span>
+          <span class="tag">好奇</span>
+          <span class="tag">胆小</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FAB -->
+<div class="fab">＋</div>
+
+<!-- TabBar -->
+<div class="tabbar">
+  <div class="tab-item">
+    <span class="tab-icon">🏠</span>
+    <span class="tab-label">首页</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">📍</span>
+    <span class="tab-label">周边</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">🎉</span>
+    <span class="tab-label">聚会</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">💬</span>
+    <span class="tab-label">社区</span>
+  </div>
+  <div class="tab-item active">
+    <span class="tab-icon">👤</span>
+    <span class="tab-label">我的</span>
+  </div>
+</div>
+
+</body>
+</html>

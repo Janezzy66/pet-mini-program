@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布内容</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.nav-bar { height: 44px; background: #FF9A5C; display: flex; align-items: center; padding: 0 16px; color: #fff; font-size: 17px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+.nav-bar .back { margin-right: 12px; font-size: 20px; cursor: pointer; }
+.section { padding: 16px; }
+.section-title { font-size: 14px; color: #333; font-weight: 600; margin-bottom: 10px; }
+.tag-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.tag-btn { padding: 8px 16px; border-radius: 12px; font-size: 13px; background: #fff; color: #666; border: 1px solid #eee; cursor: pointer; }
+.tag-btn.active { background: #FF9A5C; color: #fff; border-color: #FF9A5C; }
+.input-field { width: 100%; height: 42px; border: 1px solid #eee; border-radius: 12px; padding: 0 14px; font-size: 14px; background: #fff; outline: none; margin-top: 10px; }
+.textarea-field { width: 100%; min-height: 150px; border: 1px solid #eee; border-radius: 12px; padding: 14px; font-size: 14px; background: #fff; outline: none; resize: vertical; margin-top: 10px; line-height: 1.6; }
+.img-upload { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.img-upload .img-item { aspect-ratio: 1; background: #f0ece6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.img-upload .add-btn { background: #fff; border: 2px dashed #ddd; color: #ccc; font-size: 32px; cursor: pointer; }
+.submit-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 44px; background: #FF9A5C; color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,154,92,0.4); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="nav-bar"><span class="back">←</span>发布内容</div>
+  <div class="section">
+    <div class="section-title">选择分类</div>
+    <div class="tag-group">
+      <span class="tag-btn active">📚科普知识</span>
+      <span class="tag-btn">😂趣事分享</span>
+      <span class="tag-btn">💬交流讨论</span>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">关联宠物种类</div>
+    <div class="tag-group">
+      <span class="tag-btn active">全部</span>
+      <span class="tag-btn">🐕狗狗</span>
+      <span class="tag-btn">🐈猫咪</span>
+      <span class="tag-btn">🐰兔兔</span>
+      <span class="tag-btn">其他</span>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">标题</div>
+    <input class="input-field" placeholder="请输入标题（最多30字）" />
+  </div>
+  <div class="section">
+    <div class="section-title">正文内容</div>
+    <textarea class="textarea-field" placeholder="分享你的宠物故事或经验吧~"></textarea>
+  </div>
+  <div class="section">
+    <div class="section-title">添加图片</div>
+    <div class="img-upload">
+      <div class="img-item">📷</div>
+      <div class="img-item">📷</div>
+      <div class="img-item add-btn">➕</div>
+    </div>
+  </div>
+</div>
+<button class="submit-btn">发布</button>
+</body>
+</html>

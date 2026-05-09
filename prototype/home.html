@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>首页 - 宠物小程序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+    padding: 20px 0;
+  }
+  .phone-frame {
+    width: 375px;
+    min-height: 667px;
+    background: #FFF9F0;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 70px;
+  }
+  /* === Welcome Header === */
+  .welcome-header {
+    background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+    padding: 40px 20px 30px;
+    border-radius: 0 0 28px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-header::before {
+    content: '🐾';
+    position: absolute;
+    right: -10px;
+    top: 10px;
+    font-size: 80px;
+    opacity: 0.15;
+    transform: rotate(-20deg);
+  }
+  .welcome-header::after {
+    content: '🐾';
+    position: absolute;
+    left: 30px;
+    bottom: -5px;
+    font-size: 40px;
+    opacity: 0.12;
+    transform: rotate(30deg);
+  }
+  .welcome-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    animation: fadeInDown 0.6s ease;
+  }
+  .weather-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.3);
+    backdrop-filter: blur(6px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    animation: fadeInUp 0.6s ease 0.2s both;
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === Section Title === */
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title .more {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+    font-weight: 400;
+  }
+
+  /* === Pet Cards Scroll === */
+  .pet-cards-wrapper {
+    padding: 0 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .pet-cards-wrapper::-webkit-scrollbar { display: none; }
+  .pet-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 18px 14px;
+    margin-right: 12px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    vertical-align: top;
+    min-width: 100px;
+  }
+  .pet-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255,154,92,0.18);
+  }
+  .pet-card:last-child { margin-right: 0; }
+  .pet-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFE8D6, #FFD966);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-bottom: 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(255,154,92,0.2);
+  }
+  .pet-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+  }
+  .pet-breed {
+    font-size: 11px;
+    color: #999;
+  }
+  .pet-card-add {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 2px dashed #FFD966;
+    border-radius: 16px;
+    padding: 16px 18px 14px;
+    min-width: 100px;
+    min-height: 116px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    vertical-align: top;
+  }
+  .pet-card-add:hover {
+    border-color: #FF9A5C;
+    background: #FFF5EC;
+  }
+  .pet-card-add .add-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #FFF5EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #FF9A5C;
+    margin-bottom: 8px;
+  }
+  .pet-card-add span {
+    font-size: 12px;
+    color: #999;
+  }
+
+  /* === Quick Functions Grid === */
+  .func-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 0 20px;
+  }
+  .func-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px 8px 14px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .func-item:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 16px rgba(255,154,92,0.18);
+  }
+  .func-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .func-icon.c1 { background: linear-gradient(135deg, #FFE0CC, #FFF0E0); }
+  .func-icon.c2 { background: linear-gradient(135deg, #D4F1D4, #E8F9E8); }
+  .func-icon.c3 { background: linear-gradient(135deg, #FFE0F0, #FFF0F5); }
+  .func-icon.c4 { background: linear-gradient(135deg, #D6EAFF, #E8F4FF); }
+  .func-icon.c5 { background: linear-gradient(135deg, #FFF0CC, #FFFAE0); }
+  .func-icon.c6 { background: linear-gradient(135deg, #E8D6FF, #F2ECFF); }
+  .func-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* === Recommend Card === */
+  .recommend-card {
+    margin: 0 20px;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+  .recommend-card:hover { transform: translateY(-2px); }
+  .recommend-img {
+    width: 100%;
+    height: 130px;
+    background: linear-gradient(135deg, #FFD966 0%, #FF9A5C 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    position: relative;
+  }
+  .recommend-img .tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.9);
+    color: #FF9A5C;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .recommend-body {
+    padding: 14px 16px;
+  }
+  .recommend-body h3 {
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .recommend-body p {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* === Meetup Cards === */
+  .meetup-card {
+    margin: 0 20px 10px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    display: flex;
+    gap: 14px;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+  .meetup-card:hover { transform: translateY(-2px); }
+  .meetup-emoji {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #E8F4FF, #D6EAFF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .meetup-info { flex: 1; min-width: 0; }
+  .meetup-info h4 {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .meetup-meta {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .meetup-badge {
+    background: #FFF5EC;
+    color: #FF9A5C;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* === TabBar === */
+  .tabbar {
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 0 env(safe-area-inset-bottom, 8px);
+    border-top: 1px solid #f0ebe4;
+    z-index: 100;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: transform 0.2s ease;
+  }
+  .tab-item:hover { transform: scale(1.08); }
+  .tab-item .tab-icon { font-size: 22px; }
+  .tab-item .tab-label { font-size: 10px; color: #999; font-weight: 500; }
+  .tab-item.active .tab-label { color: #FF9A5C; font-weight: 600; }
+  .tab-item.active .tab-icon { filter: none; }
+  .tab-item.active {
+    position: relative;
+  }
+  .tab-item.active::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: #FF9A5C;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Welcome Header -->
+  <div class="welcome-header">
+    <div class="welcome-title">Hi~ 铲屎官 🐾</div>
+    <div class="weather-tip">☀️ 今天晴 26°C，适合遛宠哦~</div>
+  </div>
+
+  <!-- My Pets Section -->
+  <div class="section-title">🐾 我的宠物 <span class="more">查看全部 ›</span></div>
+  <div class="pet-cards-wrapper">
+    <div class="pet-card">
+      <div class="pet-avatar">🐕</div>
+      <div class="pet-name">豆豆</div>
+      <div class="pet-breed">金毛犬</div>
+    </div>
+    <div class="pet-card">
+      <div class="pet-avatar">🐈</div>
+      <div class="pet-name">咪咪</div>
+      <div class="pet-breed">英短蓝猫</div>
+    </div>
+    <div class="pet-card">
+      <div class="pet-avatar">🐕</div>
+      <div class="pet-name">团子</div>
+      <div class="pet-breed">柯基犬</div>
+    </div>
+    <div class="pet-card-add">
+      <div class="add-icon">＋</div>
+      <span>添加宠物</span>
+    </div>
+  </div>
+
+  <!-- Quick Functions -->
+  <div class="section-title">⚡ 快捷功能</div>
+  <div class="func-grid">
+    <div class="func-item">
+      <div class="func-icon c1">🏥</div>
+      <div class="func-label">宠物医院</div>
+    </div>
+    <div class="func-item">
+      <div class="func-icon c2">🌳</div>
+      <div class="func-label">遛狗地点</div>
+    </div>
+    <div class="func-item">
+      <div class="func-icon c3">🎉</div>
+      <div class="func-label">宠物聚会</div>
+    </div>
+    <div class="func-item">
+      <div class="func-icon c4">📖</div>
+      <div class="func-label">宠物社区</div>
+    </div>
+    <div class="func-item">
+      <div class="func-icon c5">🍽️</div>
+      <div class="func-label">上门喂养</div>
+    </div>
+    <div class="func-item">
+      <div class="func-icon c6">🛍️</div>
+      <div class="func-label">宠物商店</div>
+    </div>
+  </div>
+
+  <!-- Today Recommend -->
+  <div class="section-title">📌 今日推荐</div>
+  <div class="recommend-card">
+    <div class="recommend-img">
+      🐕
+      <span class="tag">科普知识</span>
+    </div>
+    <div class="recommend-body">
+      <h3>【金毛犬】夏天如何给金毛正确降温？</h3>
+      <p>📖 阅读 2.3k · 收藏 186</p>
+    </div>
+  </div>
+
+  <!-- Nearby Meetups -->
+  <div class="section-title">🔥 附近热门聚会 <span class="more">更多 ›</span></div>
+  <div class="meetup-card">
+    <div class="meetup-emoji">🐕</div>
+    <div class="meetup-info">
+      <h4>周末金毛线下聚会</h4>
+      <div class="meetup-meta">
+        <span>📍 朝阳公园</span>
+        <span>👥 12人已报名</span>
+      </div>
+    </div>
+    <div class="meetup-badge">本周六</div>
+  </div>
+  <div class="meetup-card">
+    <div class="meetup-emoji">🐈</div>
+    <div class="meetup-info">
+      <h4>猫咪下午茶交流会</h4>
+      <div class="meetup-meta">
+        <span>📍 喵星人咖啡</span>
+        <span>👥 8人已报名</span>
+      </div>
+    </div>
+    <div class="meetup-badge">本周日</div>
+  </div>
+
+</div>
+
+<!-- TabBar -->
+<div class="tabbar">
+  <div class="tab-item active">
+    <span class="tab-icon">🏠</span>
+    <span class="tab-label">首页</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">📍</span>
+    <span class="tab-label">周边</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">🎉</span>
+    <span class="tab-label">聚会</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">💬</span>
+    <span class="tab-label">社区</span>
+  </div>
+  <div class="tab-item">
+    <span class="tab-icon">👤</span>
+    <span class="tab-label">我的</span>
+  </div>
+</div>
+
+</body>
+</html>

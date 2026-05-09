@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布喂养订单</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.nav-bar { height: 44px; background: #FF9A5C; display: flex; align-items: center; padding: 0 16px; color: #fff; font-size: 17px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+.nav-bar .back { margin-right: 12px; font-size: 20px; cursor: pointer; }
+.section { padding: 14px 16px; }
+.section-title { font-size: 14px; color: #333; font-weight: 600; margin-bottom: 10px; }
+.pet-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.pet-scroll::-webkit-scrollbar { display: none; }
+.pet-card { width: 80px; flex-shrink: 0; text-align: center; padding: 10px 8px; background: #fff; border-radius: 12px; border: 2px solid #eee; cursor: pointer; }
+.pet-card.active { border-color: #FF9A5C; background: #FFF3E8; }
+.pet-card .emoji { font-size: 28px; margin-bottom: 4px; }
+.pet-card .name { font-size: 11px; color: #666; }
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.service-item { background: #fff; border: 2px solid #eee; border-radius: 12px; padding: 16px 10px; text-align: center; cursor: pointer; }
+.service-item.active { border-color: #FF9A5C; background: #FFF3E8; }
+.service-item .emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+.service-item .label { font-size: 13px; color: #333; }
+.form-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.form-label { font-size: 13px; color: #666; white-space: nowrap; min-width: 60px; }
+.form-input { flex: 1; height: 36px; border: 1px solid #eee; border-radius: 10px; padding: 0 12px; font-size: 13px; background: #fff; outline: none; }
+.form-select { flex: 1; height: 36px; border: 1px solid #eee; border-radius: 10px; padding: 0 12px; font-size: 13px; background: #fff; outline: none; appearance: none; }
+.textarea-field { width: 100%; min-height: 80px; border: 1px solid #eee; border-radius: 12px; padding: 12px; font-size: 13px; background: #fff; outline: none; resize: vertical; line-height: 1.6; }
+.key-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.key-btn { padding: 6px 12px; border-radius: 10px; font-size: 12px; background: #fff; color: #666; border: 1px solid #eee; cursor: pointer; }
+.key-btn.active { background: #FF9A5C; color: #fff; border-color: #FF9A5C; }
+.price-input { display: flex; align-items: center; gap: 6px; }
+.price-input .symbol { font-size: 18px; color: #FF9A5C; font-weight: 700; }
+.price-input input { width: 120px; height: 40px; border: 1px solid #eee; border-radius: 10px; padding: 0 12px; font-size: 18px; color: #FF9A5C; font-weight: 700; outline: none; background: #fff; }
+.submit-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 44px; background: #FF9A5C; color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,154,92,0.4); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="nav-bar"><span class="back">←</span>发布喂养订单</div>
+  <div class="section">
+    <div class="section-title">选择宠物</div>
+    <div class="pet-scroll">
+      <div class="pet-card active"><div class="emoji">🐱</div><div class="name">咪咪</div></div>
+      <div class="pet-card"><div class="emoji">🐶</div><div class="name">豆豆</div></div>
+      <div class="pet-card"><div class="emoji">🐰</div><div class="name">小白</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">服务类型</div>
+    <div class="service-grid">
+      <div class="service-item active"><span class="emoji">🍽️</span><span class="label">上门喂食</span></div>
+      <div class="service-item"><span class="emoji">🦮</span><span class="label">上门遛狗</span></div>
+      <div class="service-item"><span class="emoji">🤗</span><span class="label">上门陪伴</span></div>
+      <div class="service-item"><span class="emoji">✨</span><span class="label">综合照料</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">服务时间</div>
+    <div class="form-row">
+      <span class="form-label">开始日期</span>
+      <input class="form-input" type="text" value="2026-05-20" />
+    </div>
+    <div class="form-row">
+      <span class="form-label">结束日期</span>
+      <input class="form-input" type="text" value="2026-05-25" />
+    </div>
+    <div class="form-row">
+      <span class="form-label">每日次数</span>
+      <select class="form-select"><option>1次</option><option selected>2次</option><option>3次</option></select>
+    </div>
+    <div class="form-row">
+      <span class="form-label">时间段</span>
+      <input class="form-input" type="text" value="08:00" style="width:80px" />
+      <input class="form-input" type="text" value="18:00" style="width:80px" />
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">喂养要求</div>
+    <textarea class="textarea-field" placeholder="请描述具体喂养要求..."></textarea>
+  </div>
+  <div class="section">
+    <div class="section-title">家庭地址</div>
+    <div class="form-row">
+      <input class="form-input" placeholder="请输入详细地址" style="flex:1" />
+      <span style="font-size:18px;cursor:pointer">📍</span>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">钥匙交接方式</div>
+    <div class="key-options">
+      <span class="key-btn active">🔑 密码锁</span>
+      <span class="key-btn">📦 钥匙盒</span>
+      <span class="key-btn">🤝 当面交接</span>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">报酬</div>
+    <div class="price-input">
+      <span class="symbol">¥</span>
+      <input type="text" value="200" />
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">紧急联系方式</div>
+    <input class="form-input" placeholder="请输入手机号" style="width:100%" />
+  </div>
+  <div class="section">
+    <div class="section-title">特别注意事项</div>
+    <textarea class="textarea-field" placeholder="如：猫咪胆小怕生人，进门后轻声说话..."></textarea>
+  </div>
+</div>
+<button class="submit-btn">发布订单</button>
+</body>
+</html>

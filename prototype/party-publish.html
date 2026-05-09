@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布聚会</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #e8e8e8; font-family: -apple-system, "微软雅黑", sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+.page { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.nav-bar { height: 50px; background: #FF9A5C; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 600; position: relative; }
+.nav-back { position: absolute; left: 14px; font-size: 20px; color: #fff; text-decoration: none; }
+.content { padding: 16px; }
+.upload-area { width: 100%; height: 160px; border: 2px dashed #FFD6B8; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #fff; margin-bottom: 20px; cursor: pointer; }
+.upload-icon { font-size: 36px; }
+.upload-text { font-size: 13px; color: #999; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 14px; color: #333; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.form-label .required { color: #FF9A5C; }
+.form-input { width: 100%; height: 44px; border: 1px solid #f0ebe5; border-radius: 12px; padding: 0 14px; font-size: 14px; color: #333; background: #fff; outline: none; }
+.form-input:focus { border-color: #FF9A5C; }
+.form-input::placeholder { color: #ccc; }
+.form-textarea { width: 100%; height: 100px; border: 1px solid #f0ebe5; border-radius: 12px; padding: 12px 14px; font-size: 14px; color: #333; background: #fff; outline: none; resize: none; line-height: 1.6; }
+.form-textarea:focus { border-color: #FF9A5C; }
+.form-textarea::placeholder { color: #ccc; }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-group { flex: 1; }
+.form-select { width: 100%; height: 44px; border: 1px solid #f0ebe5; border-radius: 12px; padding: 0 14px; font-size: 14px; color: #333; background: #fff; outline: none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.form-select:focus { border-color: #FF9A5C; }
+.location-input { position: relative; }
+.location-input .form-input { padding-right: 40px; }
+.location-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; }
+.bottom-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 48px; background: linear-gradient(135deg, #FF9A5C, #FFD966); color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(255,154,92,0.3); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav-bar">
+    <a class="nav-back" href="party.html">←</a>
+    发布聚会
+  </div>
+  <div class="content">
+    <div class="upload-area">
+      <div class="upload-icon">📷</div>
+      <div class="upload-text">点击上传聚会封面图</div>
+      <div class="upload-text" style="font-size:11px; color:#ccc;">建议尺寸 750×400，支持 jpg/png</div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 聚会标题</div>
+      <input class="form-input" type="text" placeholder="给聚会起个有趣的名字吧～">
+    </div>
+
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 活动描述</div>
+      <textarea class="form-textarea" placeholder="介绍一下这次聚会的内容、玩法、需要准备什么..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label"><span class="required">*</span> 📅 活动日期</div>
+        <input class="form-input" type="text" placeholder="选择日期" value="2026-05-15">
+      </div>
+      <div class="form-group">
+        <div class="form-label"><span class="required">*</span> 🕐 时间段</div>
+        <input class="form-input" type="text" placeholder="如 14:00-17:00" value="14:00-17:00">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 📍 活动地点</div>
+      <div class="location-input">
+        <input class="form-input" type="text" placeholder="输入或选择活动地点">
+        <span class="location-icon">📌</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label"><span class="required">*</span> 👥 人数上限</div>
+        <select class="form-select">
+          <option>5人</option>
+          <option selected>10人</option>
+          <option>15人</option>
+          <option>20人</option>
+          <option>30人</option>
+          <option>不限</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label"><span class="required">*</span> 🐾 种类限制</div>
+        <select class="form-select">
+          <option selected>不限种类</option>
+          <option>仅限狗狗</option>
+          <option>仅限猫咪</option>
+          <option>其他</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-btn">🎉 发布聚会</div>
+</div>
+</body>
+</html>

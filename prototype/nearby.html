@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周边探索</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #e8e8e8; font-family: -apple-system, "微软雅黑", sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+.page { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 70px; }
+.nav-bar { height: 50px; background: #FF9A5C; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 600; }
+.map-area { height: 200px; background: #d4e8d0; position: relative; display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px; overflow: hidden; }
+.map-area::before { content: "🗺️ 地图区域"; font-size: 20px; }
+.map-dot { position: absolute; width: 14px; height: 14px; background: #FF9A5C; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.map-dot:nth-child(1) { top: 40px; left: 80px; }
+.map-dot:nth-child(2) { top: 70px; left: 200px; }
+.map-dot:nth-child(3) { top: 120px; left: 140px; }
+.map-dot:nth-child(4) { top: 90px; left: 280px; }
+.filter-bar { display: flex; align-items: center; padding: 12px 10px; gap: 8px; overflow-x: auto; }
+.filter-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 12px; font-size: 13px; background: #fff; color: #666; border: 1px solid #eee; cursor: pointer; white-space: nowrap; }
+.filter-tab.active { background: #FF9A5C; color: #fff; border-color: #FF9A5C; }
+.view-switch { display: flex; justify-content: flex-end; padding: 0 16px 8px; gap: 8px; }
+.view-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+.view-btn.active { background: #FF9A5C; border-color: #FF9A5C; color: #fff; }
+.card-list { padding: 0 12px; }
+.place-card { display: flex; gap: 12px; padding: 14px; background: #fff; border-radius: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.place-img { width: 80px; height: 80px; background: #f0f0f0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.place-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.place-name { font-size: 15px; font-weight: 600; color: #333; }
+.place-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #999; }
+.place-rating { color: #FF9A5C; font-weight: 500; }
+.place-addr { font-size: 12px; color: #666; }
+.place-time { font-size: 11px; color: #999; }
+.place-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.place-tag { font-size: 11px; padding: 2px 8px; background: #FFF3E8; color: #FF9A5C; border-radius: 12px; }
+.tab-bar { position: fixed; bottom: 0; width: 375px; height: 60px; background: #fff; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #f0f0f0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+.tab-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: #999; text-decoration: none; }
+.tab-item.active { color: #FF9A5C; }
+.tab-item .tab-icon { font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav-bar">周边探索</div>
+  <div class="map-area">
+    <div class="map-dot"></div>
+    <div class="map-dot"></div>
+    <div class="map-dot"></div>
+    <div class="map-dot"></div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-tab active">🌳 遛狗地点</div>
+    <div class="filter-tab">🍽️ 宠物餐厅</div>
+    <div class="filter-tab">🛍️ 宠物商店</div>
+    <div class="filter-tab">🏥 宠物医院</div>
+  </div>
+  <div class="view-switch">
+    <div class="view-btn active">🗺</div>
+    <div class="view-btn">📋</div>
+  </div>
+  <div class="card-list">
+    <div class="place-card">
+      <div class="place-img">🌳</div>
+      <div class="place-info">
+        <div class="place-name">朝阳公园宠物乐园</div>
+        <div class="place-meta"><span class="place-rating">⭐ 4.9</span><span>500m</span></div>
+        <div class="place-addr">📍 朝阳区朝阳公园南路1号</div>
+        <div class="place-time">🕐 06:00-22:00</div>
+        <div class="place-tags">
+          <span class="place-tag">免费停车</span>
+          <span class="place-tag">有饮水区</span>
+          <span class="place-tag">大型犬友好</span>
+        </div>
+      </div>
+    </div>
+    <div class="place-card">
+      <div class="place-img">☕</div>
+      <div class="place-info">
+        <div class="place-name">萌宠友好咖啡馆</div>
+        <div class="place-meta"><span class="place-rating">⭐ 4.7</span><span>800m</span></div>
+        <div class="place-addr">📍 三里屯太古里北区B1层</div>
+        <div class="place-time">🕐 10:00-22:00</div>
+        <div class="place-tags">
+          <span class="place-tag">宠物餐食</span>
+          <span class="place-tag">有寄存</span>
+        </div>
+      </div>
+    </div>
+    <div class="place-card">
+      <div class="place-img">🛍️</div>
+      <div class="place-info">
+        <div class="place-name">汪星人用品店</div>
+        <div class="place-meta"><span class="place-rating">⭐ 4.5</span><span>1.2km</span></div>
+        <div class="place-addr">📍 望京SOHO T1一层108</div>
+        <div class="place-time">🕐 09:00-21:00</div>
+        <div class="place-tags">
+          <span class="place-tag">会员优惠</span>
+          <span class="place-tag">可试穿</span>
+        </div>
+      </div>
+    </div>
+    <div class="place-card">
+      <div class="place-img">🏥</div>
+      <div class="place-info">
+        <div class="place-name">爱心宠物医院</div>
+        <div class="place-meta"><span class="place-rating">⭐ 4.8</span><span>600m</span></div>
+        <div class="place-addr">📍 朝阳区建国路88号</div>
+        <div class="place-time">🕐 08:00-20:00（急诊24h）</div>
+        <div class="place-tags">
+          <span class="place-tag">24h急诊</span>
+          <span class="place-tag">可刷医保</span>
+          <span class="place-tag">免费体检</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <a class="tab-item" href="#"><span class="tab-icon">🏠</span>首页</a>
+    <a class="tab-item active" href="nearby.html"><span class="tab-icon">📍</span>周边</a>
+    <a class="tab-item" href="party.html"><span class="tab-icon">🎉</span>聚会</a>
+    <a class="tab-item" href="#"><span class="tab-icon">💬</span>社区</a>
+    <a class="tab-item" href="#"><span class="tab-icon">👤</span>我的</a>
+  </div>
+</div>
+</body>
+</html>

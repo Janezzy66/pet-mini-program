@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>添加宠物 - 宠物小程序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+    padding: 20px 0;
+  }
+  .phone-frame {
+    width: 375px;
+    min-height: 667px;
+    background: #FFF9F0;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 90px;
+  }
+
+  /* === Nav Bar === */
+  .navbar {
+    background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+    padding: 44px 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .navbar .back {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s;
+  }
+  .navbar .back:hover { background: rgba(255,255,255,0.35); }
+  .navbar h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* === Avatar Upload === */
+  .avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 0 8px;
+  }
+  .avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFE8D6, #FFD966);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 4px dashed #FF9A5C;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+  .avatar-circle:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 20px rgba(255,154,92,0.25);
+  }
+  .avatar-circle .cam-icon { font-size: 32px; }
+  .avatar-circle .cam-text {
+    font-size: 10px;
+    color: #FF9A5C;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  /* === Form Sections === */
+  .form-section {
+    padding: 0 20px;
+    margin-top: 16px;
+  }
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .form-label .required {
+    color: #FF9A5C;
+    font-size: 12px;
+  }
+
+  /* text input */
+  .form-input {
+    width: 100%;
+    height: 44px;
+    border: 2px solid #F0EBE4;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .form-input:focus {
+    border-color: #FF9A5C;
+  }
+  .form-input::placeholder { color: #ccc; }
+
+  /* select */
+  .form-select {
+    width: 100%;
+    height: 44px;
+    border: 2px solid #F0EBE4;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: #333;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .form-select:focus { border-color: #FF9A5C; }
+
+  /* species tags */
+  .species-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .species-tag {
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 2px solid #F0EBE4;
+    background: #fff;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .species-tag:hover {
+    border-color: #FFD966;
+    background: #FFFBF0;
+  }
+  .species-tag.active {
+    border-color: #FF9A5C;
+    background: linear-gradient(135deg, #FFF5EC, #FFF0E0);
+    color: #FF9A5C;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(255,154,92,0.15);
+  }
+
+  /* gender select */
+  .gender-row {
+    display: flex;
+    gap: 12px;
+  }
+  .gender-btn {
+    flex: 1;
+    height: 48px;
+    border: 2px solid #F0EBE4;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #666;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .gender-btn:hover { border-color: #FFD966; }
+  .gender-btn.active-male {
+    border-color: #7EC8E3;
+    background: linear-gradient(135deg, #E8F4FF, #D6EAFF);
+    color: #4BA8D0;
+    font-weight: 600;
+  }
+  .gender-btn.active-female {
+    border-color: #FFB0C8;
+    background: linear-gradient(135deg, #FFF0F5, #FFE0EB);
+    color: #E87DA0;
+    font-weight: 600;
+  }
+
+  /* switch */
+  .switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 2px solid #F0EBE4;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .switch-row .label { font-size: 14px; color: #666; }
+  .switch-toggle {
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
+    background: #ddd;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .switch-toggle.on { background: #FF9A5C; }
+  .switch-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: left 0.3s;
+  }
+  .switch-toggle.on::after { left: 23px; }
+
+  /* personality tags */
+  .personality-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .p-tag {
+    padding: 7px 16px;
+    border-radius: 12px;
+    border: 2px solid #F0EBE4;
+    background: #fff;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .p-tag:hover {
+    border-color: #7EC8E3;
+    background: #F0FAFF;
+  }
+  .p-tag.active {
+    border-color: #7EC8E3;
+    background: linear-gradient(135deg, #EDF8FF, #D6EAFF);
+    color: #4BA8D0;
+    font-weight: 600;
+  }
+
+  /* textarea */
+  .form-textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 2px solid #F0EBE4;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .form-textarea:focus { border-color: #FF9A5C; }
+  .form-textarea::placeholder { color: #ccc; }
+
+  /* === Save Button === */
+  .save-bar {
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 8px));
+    background: #FFF9F0;
+    border-top: 1px solid #f0ebe4;
+    z-index: 100;
+  }
+  .save-btn {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #FF9A5C, #FFD966);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,154,92,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+  }
+  .save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(255,154,92,0.45);
+  }
+  .save-btn:active {
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- NavBar -->
+  <div class="navbar">
+    <div class="back">‹</div>
+    <h1>添加宠物</h1>
+  </div>
+
+  <!-- Avatar Upload -->
+  <div class="avatar-upload">
+    <div class="avatar-circle">
+      <span class="cam-icon">📷</span>
+      <span class="cam-text">上传头像</span>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-section">
+    <!-- Nickname -->
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 昵称</div>
+      <input class="form-input" type="text" placeholder="给宠物取个可爱的名字吧~">
+    </div>
+
+    <!-- Species -->
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 种类</div>
+      <div class="species-tags">
+        <div class="species-tag active">🐕 狗</div>
+        <div class="species-tag">🐈 猫</div>
+        <div class="species-tag">🐰 兔</div>
+        <div class="species-tag">🐹 仓鼠</div>
+        <div class="species-tag">🐦 鸟</div>
+        <div class="species-tag">🐟 鱼</div>
+        <div class="species-tag">📦 其他</div>
+      </div>
+    </div>
+
+    <!-- Breed -->
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 品种</div>
+      <select class="form-select">
+        <option value="" disabled>请选择品种</option>
+        <option value="golden" selected>金毛寻回犬</option>
+        <option value="corgi">柯基犬</option>
+        <option value="husky">哈士奇</option>
+        <option value="poodle">泰迪/贵宾</option>
+        <option value="labrador">拉布拉多</option>
+        <option value="samoyed">萨摩耶</option>
+        <option value="shiba">柴犬</option>
+        <option value="other">其他品种</option>
+      </select>
+    </div>
+
+    <!-- Gender -->
+    <div class="form-group">
+      <div class="form-label"><span class="required">*</span> 性别</div>
+      <div class="gender-row">
+        <div class="gender-btn active-male">♂ 弟弟</div>
+        <div class="gender-btn">♀ 妹妹</div>
+      </div>
+    </div>
+
+    <!-- Birthday -->
+    <div class="form-group">
+      <div class="form-label">🎂 生日</div>
+      <input class="form-input" type="date" value="2023-03-15">
+    </div>
+
+    <!-- Weight -->
+    <div class="form-group">
+      <div class="form-label">⚖️ 体重 (kg)</div>
+      <input class="form-input" type="number" placeholder="请输入体重" step="0.1" value="28">
+    </div>
+
+    <!-- Neutered -->
+    <div class="form-group">
+      <div class="form-label">✂️ 是否绝育</div>
+      <div class="switch-row">
+        <span class="label">已绝育</span>
+        <div class="switch-toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+
+    <!-- Personality -->
+    <div class="form-group">
+      <div class="form-label">💝 性格标签</div>
+      <div class="personality-tags">
+        <div class="p-tag active">活泼</div>
+        <div class="p-tag">安静</div>
+        <div class="p-tag active">粘人</div>
+        <div class="p-tag">独立</div>
+        <div class="p-tag">好奇</div>
+        <div class="p-tag">胆小</div>
+        <div class="p-tag active">友好</div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="form-group">
+      <div class="form-label">📝 备注</div>
+      <textarea class="form-textarea" placeholder="记录一些关于宠物的特别信息..."></textarea>
+    </div>
+  </div>
+
+</div>
+
+<!-- Save Button -->
+<div class="save-bar">
+  <button class="save-btn">🐾 保存宠物档案</button>
+</div>
+
+</body>
+</html>

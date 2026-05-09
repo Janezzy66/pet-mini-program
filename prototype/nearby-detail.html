@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地点详情</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #e8e8e8; font-family: -apple-system, "微软雅黑", sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px 0; }
+.page { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.header { position: relative; height: 200px; background: linear-gradient(135deg, #d4e8d0, #b8ddb0); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.back-btn { position: absolute; top: 14px; left: 14px; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.content { padding: 20px 16px; }
+.title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.title-row h1 { font-size: 20px; color: #333; font-weight: 700; }
+.rating-badge { background: #FF9A5C; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: 500; }
+.type-tag { display: inline-block; padding: 3px 10px; background: #E8F8E0; color: #4CAF50; border-radius: 12px; font-size: 12px; margin-bottom: 16px; }
+.info-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0ebe5; }
+.info-left { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666; }
+.nav-btn { padding: 6px 14px; background: #7EC8E3; color: #fff; border-radius: 24px; font-size: 12px; text-decoration: none; }
+.info-single { padding: 12px 0; border-bottom: 1px solid #f0ebe5; font-size: 14px; color: #666; display: flex; align-items: center; gap: 8px; }
+.tags-section { padding: 16px 0; }
+.tags-section h3 { font-size: 14px; color: #333; margin-bottom: 10px; }
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-item { padding: 5px 12px; background: #FFF3E8; color: #FF9A5C; border-radius: 12px; font-size: 12px; }
+.desc-section { padding: 16px 0; }
+.desc-section h3 { font-size: 14px; color: #333; margin-bottom: 10px; }
+.desc-section p { font-size: 14px; color: #666; line-height: 1.8; }
+.bottom-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 48px; background: linear-gradient(135deg, #FF9A5C, #FFD966); color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 16px rgba(255,154,92,0.3); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <a class="back-btn" href="nearby.html">←</a>
+    🌳
+  </div>
+  <div class="content">
+    <div class="title-row">
+      <h1>朝阳公园宠物乐园</h1>
+      <span class="rating-badge">⭐ 4.9</span>
+    </div>
+    <span class="type-tag">🌳 遛狗地点</span>
+
+    <div class="info-row">
+      <div class="info-left">📍 朝阳区朝阳公园南路1号</div>
+      <a class="nav-btn" href="#">🧭 导航</a>
+    </div>
+    <div class="info-single">🕐 营业时间：06:00-22:00（全年无休）</div>
+    <div class="info-single">📞 联系电话：010-6595-8888</div>
+
+    <div class="tags-section">
+      <h3>特色标签</h3>
+      <div class="tags-wrap">
+        <span class="tag-item">免费停车</span>
+        <span class="tag-item">有饮水区</span>
+        <span class="tag-item">大型犬友好</span>
+        <span class="tag-item">有围栏</span>
+        <span class="tag-item">草坪开阔</span>
+        <span class="tag-item">有洗爪区</span>
+      </div>
+    </div>
+
+    <div class="desc-section">
+      <h3>详细介绍</h3>
+      <p>朝阳公园宠物乐园是北京市区内最大的宠物户外活动区域之一，占地面积约5000平方米。园内设有专门的大型犬活动区和小型犬活动区，两区之间用矮栅栏隔开，确保小型犬安全。</p>
+      <br>
+      <p>园区配备了多个饮水点、洗爪池和休息座椅。草坪定期维护，干净整洁。周末还会有宠物社交活动和训练课程。停车场可容纳200辆车，对宠物乐园使用者免费开放。</p>
+    </div>
+  </div>
+
+  <div class="bottom-btn">🧭 导航前往</div>
+</div>
+</body>
+</html>
