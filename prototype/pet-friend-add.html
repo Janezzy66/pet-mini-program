@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加好友</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, "微软雅黑", sans-serif;
+        }
+        .page {
+            width: 375px;
+            min-height: 667px;
+            background: #FFF9F0;
+            position: relative;
+        }
+        /* 顶部导航 */
+        .nav-bar {
+            height: 44px;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .nav-back {
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+        /* 搜索区 */
+        .search-area {
+            padding: 16px;
+            background: #fff;
+            border-bottom: 1px solid #f0ebe5;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f5f2ee;
+            border-radius: 20px;
+            padding: 10px 16px;
+            gap: 8px;
+        }
+        .search-box-icon {
+            font-size: 16px;
+            color: #bbb;
+        }
+        .search-box-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+        }
+        .search-box-input::placeholder {
+            color: #bbb;
+        }
+        /* 添加方式网格 */
+        .add-methods {
+            padding: 16px;
+        }
+        .add-methods-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .method-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .method-card:hover {
+            transform: translateY(-2px);
+        }
+        .method-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #FFF3E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .method-name {
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
+        .method-desc {
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+        }
+        /* 推荐列表 */
+        .recommend-section {
+            padding: 0 16px 20px;
+        }
+        .recommend-title {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-top: 8px;
+        }
+        .recommend-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px rgba(255,154,92,0.08);
+        }
+        .recommend-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #FFF3E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .recommend-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .recommend-name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+        .recommend-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+        .recommend-breed {
+            font-size: 11px;
+            color: #FF9A5C;
+            background: #FFF3E8;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+        .recommend-reason {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.4;
+        }
+        .recommend-btn {
+            flex-shrink: 0;
+            padding: 7px 14px;
+            border-radius: 16px;
+            background: #FF9A5C;
+            color: #fff;
+            border: none;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- 顶部导航 -->
+    <div class="nav-bar">
+        <span class="nav-back" onclick="history.back()">← </span>
+        <span class="nav-title">添加好友</span>
+    </div>
+
+    <!-- 搜索区 -->
+    <div class="search-area">
+        <div class="search-box">
+            <span class="search-box-icon">🔍</span>
+            <input class="search-box-input" type="text" placeholder="输入宠物ID或主人昵称" />
+        </div>
+    </div>
+
+    <!-- 添加方式 -->
+    <div class="add-methods">
+        <div class="add-methods-title">添加方式</div>
+        <div class="methods-grid">
+            <div class="method-card">
+                <div class="method-icon">🔍</div>
+                <div class="method-name">搜索添加</div>
+                <div class="method-desc">搜索ID或昵称</div>
+            </div>
+            <div class="method-card">
+                <div class="method-icon">📱</div>
+                <div class="method-name">扫一扫</div>
+                <div class="method-desc">扫宠物名片</div>
+            </div>
+            <div class="method-card">
+                <div class="method-icon">📍</div>
+                <div class="method-name">附近的宠物</div>
+                <div class="method-desc">发现身边的毛孩子</div>
+            </div>
+            <div class="method-card">
+                <div class="method-icon">👥</div>
+                <div class="method-name">推荐好友</div>
+                <div class="method-desc">可能认识的宠物</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 推荐列表 -->
+    <div class="recommend-section">
+        <div class="recommend-title">你可能认识的宠物 🐾</div>
+
+        <div class="recommend-card">
+            <div class="recommend-avatar">🐕</div>
+            <div class="recommend-info">
+                <div class="recommend-name-row">
+                    <span class="recommend-name">Lucky</span>
+                    <span class="recommend-breed">金毛</span>
+                </div>
+                <div class="recommend-reason">你们在朝阳公园出没过</div>
+            </div>
+            <button class="recommend-btn">加好友</button>
+        </div>
+
+        <div class="recommend-card">
+            <div class="recommend-avatar">🐈‍⬛</div>
+            <div class="recommend-info">
+                <div class="recommend-name-row">
+                    <span class="recommend-name">小黑</span>
+                    <span class="recommend-breed">黑猫</span>
+                </div>
+                <div class="recommend-reason">和你的好友团子是朋友</div>
+            </div>
+            <button class="recommend-btn">加好友</button>
+        </div>
+
+        <div class="recommend-card">
+            <div class="recommend-avatar">🦮</div>
+            <div class="recommend-info">
+                <div class="recommend-name-row">
+                    <span class="recommend-name">旺旺</span>
+                    <span class="recommend-breed">拉布拉多</span>
+                </div>
+                <div class="recommend-reason">你们有3位共同好友</div>
+            </div>
+            <button class="recommend-btn">加好友</button>
+        </div>
+
+        <div class="recommend-card">
+            <div class="recommend-avatar">🐇</div>
+            <div class="recommend-info">
+                <div class="recommend-name-row">
+                    <span class="recommend-name">雪球</span>
+                    <span class="recommend-breed">垂耳兔</span>
+                </div>
+                <div class="recommend-reason">和你在同一个小区</div>
+            </div>
+            <button class="recommend-btn">加好友</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

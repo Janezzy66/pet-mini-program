@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设置我的状态 - 宠物小程序</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+  padding: 20px 0;
+}
+.phone-frame {
+  width: 375px;
+  min-height: 667px;
+  background: #FFF9F0;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 90px;
+}
+
+/* === Nav Bar === */
+.nav-bar {
+  height: 50px;
+  background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.nav-back {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* === Section === */
+.section {
+  padding: 20px 20px 0;
+}
+.section-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-desc {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+/* === Pet selector (horizontal) === */
+.pet-selector {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.pet-selector::-webkit-scrollbar { display: none; }
+.pet-select-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 20px 12px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  min-width: 90px;
+  border: 2px solid transparent;
+}
+.pet-select-card.selected {
+  border-color: #FF9A5C;
+  background: #FFF5EC;
+}
+.pet-select-card:hover { transform: translateY(-2px); }
+.psc-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE8D6, #FFD966);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 6px;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(255,154,92,0.2);
+}
+.pet-select-card.selected .psc-avatar {
+  border-color: #FF9A5C;
+}
+.psc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+.psc-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FF9A5C;
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.pet-select-card.selected .psc-check { opacity: 1; }
+
+/* === Online toggle === */
+.online-toggle-card {
+  margin: 0 20px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.toggle-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toggle-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.toggle-icon.online { background: #E8F5E9; }
+.toggle-icon.offline { background: #f5f5f5; }
+.toggle-text .t-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+.toggle-text .t-desc {
+  font-size: 11px;
+  color: #999;
+}
+.toggle-track {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.toggle-track.on { background: #4CAF50; }
+.toggle-track.off { background: #ccc; }
+.toggle-thumb {
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: left 0.3s;
+}
+.toggle-track.on .toggle-thumb { left: 22px; }
+.toggle-track.off .toggle-thumb { left: 2px; }
+
+/* Separator */
+.sep {
+  height: 8px;
+  background: transparent;
+}
+
+/* === Status cards grid === */
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 20px;
+}
+.status-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 14px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+  text-align: center;
+}
+.status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255,154,92,0.18);
+}
+.status-card.selected {
+  border-color: #FF9A5C;
+  background: #FFF5EC;
+}
+.status-emoji {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.status-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+.status-card.selected .status-text {
+  color: #FF9A5C;
+}
+
+/* Custom status input */
+.custom-status {
+  margin: 10px 20px 0;
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.custom-status:focus-within {
+  border-color: #FF9A5C;
+}
+.custom-status .cs-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.custom-status input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+  font-family: inherit;
+}
+.custom-status input::placeholder {
+  color: #ccc;
+}
+
+/* === Privacy settings === */
+.privacy-section {
+  margin: 0 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  overflow: hidden;
+}
+.privacy-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #f8f4ee;
+}
+.privacy-item:last-child { border-bottom: none; }
+.privacy-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.privacy-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+.privacy-desc {
+  font-size: 11px;
+  color: #999;
+}
+/* Small toggle for privacy */
+.sm-toggle {
+  width: 42px;
+  height: 24px;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+}
+.sm-toggle.on { background: #4CAF50; }
+.sm-toggle.off { background: #ccc; }
+.sm-toggle .sm-thumb {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: left 0.3s;
+}
+.sm-toggle.on .sm-thumb { left: 20px; }
+.sm-toggle.off .sm-thumb { left: 2px; }
+
+/* Radio-like option */
+.privacy-radio {
+  display: flex;
+  gap: 8px;
+}
+.radio-opt {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.radio-opt.active {
+  background: #FF9A5C;
+  color: #fff;
+  font-weight: 600;
+}
+.radio-opt.inactive {
+  background: #f5f5f5;
+  color: #666;
+}
+.recommend-badge {
+  font-size: 10px;
+  color: #FF9A5C;
+  background: #FFF3E8;
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+
+/* === Save button === */
+.save-btn-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 375px;
+  padding: 12px 20px env(safe-area-inset-bottom, 16px);
+  background: #fff;
+  border-top: 1px solid #f0ece6;
+  z-index: 60;
+}
+.save-btn {
+  width: 100%;
+  padding: 14px 0;
+  background: linear-gradient(135deg, #FF9A5C, #FFD966);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255,154,92,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,154,92,0.4);
+}
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">
+    <a class="nav-back" href="pet-radar.html">←</a>
+    设置我的状态
+  </div>
+
+  <!-- Select pet -->
+  <div class="section">
+    <div class="section-label">🐾 选择上线的宠物</div>
+    <div class="section-desc">选择你要带出门的萌宠，Ta将显示在附近地图中</div>
+  </div>
+  <div class="pet-selector">
+    <div class="pet-select-card selected">
+      <div class="psc-avatar">🐕</div>
+      <div class="psc-name">豆豆</div>
+      <div class="psc-check">✓</div>
+    </div>
+    <div class="pet-select-card">
+      <div class="psc-avatar">🐈</div>
+      <div class="psc-name">咪咪</div>
+      <div class="psc-check">✓</div>
+    </div>
+    <div class="pet-select-card">
+      <div class="psc-avatar">🐕</div>
+      <div class="psc-name">团子</div>
+      <div class="psc-check">✓</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Online status toggle -->
+  <div class="section">
+    <div class="section-label">📡 在线状态</div>
+  </div>
+  <div class="online-toggle-card">
+    <div class="toggle-info">
+      <div class="toggle-icon online">🟢</div>
+      <div class="toggle-text">
+        <div class="t-title">上线</div>
+        <div class="t-desc">显示在附近萌宠地图中</div>
+      </div>
+    </div>
+    <div class="toggle-track on">
+      <div class="toggle-thumb"></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Status selection -->
+  <div class="section">
+    <div class="section-label">💭 当前状态</div>
+    <div class="section-desc">选择你和宠物正在做的事情</div>
+  </div>
+  <div class="status-grid">
+    <div class="status-card selected">
+      <div class="status-emoji">🦮</div>
+      <div class="status-text">遛弯中</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">🌳</div>
+      <div class="status-text">在公园玩</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">🎾</div>
+      <div class="status-text">在玩耍</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">☕</div>
+      <div class="status-text">在宠物咖啡馆</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">🏠</div>
+      <div class="status-text">在家休息</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">😷</div>
+      <div class="status-text">生病休养中</div>
+    </div>
+    <div class="status-card">
+      <div class="status-emoji">🎉</div>
+      <div class="status-text">想找小伙伴玩</div>
+    </div>
+  </div>
+  <!-- Custom status -->
+  <div class="custom-status">
+    <span class="cs-icon">✏️</span>
+    <input type="text" placeholder="自定义状态，如"在小区门口等你~"">
+  </div>
+
+  <div class="sep"></div>
+  <div class="sep"></div>
+
+  <!-- Privacy settings -->
+  <div class="section">
+    <div class="section-label">🔒 隐私设置</div>
+  </div>
+  <div class="privacy-section">
+    <div class="privacy-item">
+      <div class="privacy-left">
+        <div class="privacy-title">位置精度</div>
+        <div class="privacy-desc">选择你的位置显示方式</div>
+      </div>
+      <div class="privacy-radio">
+        <span class="radio-opt inactive">精确位置</span>
+        <span class="radio-opt active">大致范围<span class="recommend-badge">推荐</span></span>
+      </div>
+    </div>
+    <div class="privacy-item">
+      <div class="privacy-left">
+        <div class="privacy-title">允许陌生人打招呼</div>
+        <div class="privacy-desc">关闭后只有好友能给你发消息</div>
+      </div>
+      <div class="sm-toggle on">
+        <div class="sm-thumb"></div>
+      </div>
+    </div>
+    <div class="privacy-item">
+      <div class="privacy-left">
+        <div class="privacy-title">仅对好友可见</div>
+        <div class="privacy-desc">开启后只有好友能在地图看到你</div>
+      </div>
+      <div class="sm-toggle off">
+        <div class="sm-thumb"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="sep"></div>
+
+</div>
+
+<!-- Save button -->
+<div class="save-btn-wrap">
+  <button class="save-btn">🐾 保存设置</button>
+</div>
+
+</body>
+</html>

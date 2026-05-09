@@ -221,6 +221,9 @@
   .func-icon.c4 { background: linear-gradient(135deg, #D6EAFF, #E8F4FF); }
   .func-icon.c5 { background: linear-gradient(135deg, #FFF0CC, #FFFAE0); }
   .func-icon.c6 { background: linear-gradient(135deg, #E8D6FF, #F2ECFF); }
+  .func-icon.c7 { background: linear-gradient(135deg, #D6F5E8, #E0FFF0); }
+  .func-icon.c8 { background: linear-gradient(135deg, #FFE6CC, #FFF2E0); }
+  .func-icon.c9 { background: linear-gradient(135deg, #FFD6E8, #FFE8F2); }
   .func-label {
     font-size: 12px;
     color: #666;
@@ -328,6 +331,65 @@
     flex-shrink: 0;
   }
 
+  /* === Friend Activity === */
+  .friend-activity {
+    margin: 0 20px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  }
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .activity-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFE8D6, #FFD966);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .activity-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .activity-content .activity-text {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.6;
+    white-space: normal;
+    word-break: break-all;
+  }
+  .activity-content .activity-text .nickname {
+    font-weight: 600;
+    color: #FF9A5C;
+  }
+  .activity-content .activity-time {
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+  .activity-more {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #FF9A5C;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 6px 0;
+    border-top: 1px solid #f5f0eb;
+  }
+  .activity-more:hover {
+    color: #e8854a;
+  }
+
   /* === TabBar === */
   .tabbar {
     position: fixed;
@@ -418,22 +480,34 @@
       <div class="func-icon c2">🌳</div>
       <div class="func-label">遛狗地点</div>
     </div>
-    <div class="func-item">
+    <a href="party.html" class="func-item" style="text-decoration:none;">
       <div class="func-icon c3">🎉</div>
       <div class="func-label">宠物聚会</div>
-    </div>
-    <div class="func-item">
+    </a>
+    <a href="community.html" class="func-item" style="text-decoration:none;">
       <div class="func-icon c4">📖</div>
       <div class="func-label">宠物社区</div>
-    </div>
-    <div class="func-item">
+    </a>
+    <a href="feeding-hall.html" class="func-item" style="text-decoration:none;">
       <div class="func-icon c5">🍽️</div>
       <div class="func-label">上门喂养</div>
-    </div>
+    </a>
     <div class="func-item">
       <div class="func-icon c6">🛍️</div>
       <div class="func-label">宠物商店</div>
     </div>
+    <a href="pet-radar.html" class="func-item" style="text-decoration:none;">
+      <div class="func-icon c7">🐾</div>
+      <div class="func-label">附近萌宠</div>
+    </a>
+    <a href="walk-checkin.html" class="func-item" style="text-decoration:none;">
+      <div class="func-icon c8">📅</div>
+      <div class="func-label">遛宠打卡</div>
+    </a>
+    <a href="pet-moments.html" class="func-item" style="text-decoration:none;">
+      <div class="func-icon c9">📸</div>
+      <div class="func-label">朋友圈</div>
+    </a>
   </div>
 
   <!-- Today Recommend -->
@@ -472,6 +546,19 @@
       </div>
     </div>
     <div class="meetup-badge">本周日</div>
+  </div>
+
+  <!-- Friend Activity -->
+  <div class="section-title">👋 好友动态 <span class="more">查看更多 ›</span></div>
+  <div class="friend-activity">
+    <div class="activity-item">
+      <div class="activity-avatar">🐕</div>
+      <div class="activity-content">
+        <div class="activity-text"><span class="nickname">豆豆爸：</span>今天阳光真好，豆豆在公园跑了一整圈~</div>
+        <div class="activity-time">3分钟前</div>
+      </div>
+    </div>
+    <a href="pet-moments.html" class="activity-more">查看更多 ›</a>
   </div>
 
 </div>

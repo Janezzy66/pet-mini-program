@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物好友</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, "微软雅黑", sans-serif;
+        }
+        .page {
+            width: 375px;
+            min-height: 667px;
+            background: #FFF9F0;
+            position: relative;
+            padding-bottom: 80px;
+        }
+        /* 顶部导航 */
+        .nav-bar {
+            height: 44px;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        /* 搜索框 */
+        .search-bar {
+            padding: 12px 16px;
+            background: #fff;
+        }
+        .search-input {
+            width: 100%;
+            height: 36px;
+            border-radius: 18px;
+            border: none;
+            background: #f5f2ee;
+            padding: 0 16px;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+        }
+        .search-input::placeholder {
+            color: #bbb;
+        }
+        /* 好友请求区 */
+        .request-section {
+            margin: 12px 16px;
+        }
+        .request-tip {
+            background: #FFF3E0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #FF9A5C;
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .request-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .request-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #FFF3E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .request-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .request-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .request-text strong {
+            color: #FF9A5C;
+        }
+        .request-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .btn-accept {
+            padding: 6px 12px;
+            border-radius: 14px;
+            border: none;
+            background: #FF9A5C;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .btn-reject {
+            padding: 6px 12px;
+            border-radius: 14px;
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        /* 好友列表 */
+        .friend-section {
+            padding: 0 16px;
+        }
+        .section-letter {
+            font-size: 12px;
+            color: #999;
+            font-weight: 600;
+            padding: 10px 0 6px;
+            border-bottom: 1px solid #f0ebe5;
+        }
+        .friend-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f0ec;
+        }
+        .friend-item:last-child {
+            border-bottom: none;
+        }
+        .friend-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #FFF3E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+        .friend-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .friend-name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .friend-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+        .friend-breed {
+            font-size: 12px;
+            color: #FF9A5C;
+            background: #FFF3E8;
+            padding: 1px 6px;
+            border-radius: 8px;
+        }
+        .friend-owner {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .friend-status {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #999;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .status-dot.online {
+            background: #4CD964;
+        }
+        .status-dot.offline {
+            background: #ddd;
+        }
+        /* 底部按钮 */
+        .bottom-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 343px;
+            height: 48px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #FF9A5C, #FFB47A);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255,154,92,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- 顶部导航 -->
+    <div class="nav-bar">宠物好友 🐾</div>
+
+    <!-- 搜索框 -->
+    <div class="search-bar">
+        <input class="search-input" type="text" placeholder="🔍 搜索好友或宠物名字" />
+    </div>
+
+    <!-- 好友请求区 -->
+    <div class="request-section">
+        <div class="request-tip">🔔 你有 2 条好友请求待处理</div>
+        <div class="request-card">
+            <div class="request-avatar">🐩</div>
+            <div class="request-info">
+                <div class="request-text"><strong>泰迪球球</strong> 想和你的豆豆成为好友</div>
+            </div>
+            <div class="request-actions">
+                <button class="btn-accept">同意</button>
+                <button class="btn-reject">拒绝</button>
+            </div>
+        </div>
+        <div class="request-card">
+            <div class="request-avatar">🐰</div>
+            <div class="request-info">
+                <div class="request-text"><strong>小白兔兔</strong> 想和你的豆豆成为好友</div>
+            </div>
+            <div class="request-actions">
+                <button class="btn-accept">同意</button>
+                <button class="btn-reject">拒绝</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 好友列表 -->
+    <div class="friend-section">
+        <div class="section-letter">D</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐕</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">大黄</span>
+                    <span class="friend-breed">中华田园犬</span>
+                </div>
+                <div class="friend-owner">主人：大黄哥</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot offline"></span>
+                <span>昨天</span>
+            </div>
+        </div>
+
+        <div class="section-letter">M</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐱</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">咪咪</span>
+                    <span class="friend-breed">布偶</span>
+                </div>
+                <div class="friend-owner">主人：咪咪姐姐</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot online"></span>
+                <span>在线</span>
+            </div>
+        </div>
+
+        <div class="section-letter">Q</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐩</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">球球</span>
+                    <span class="friend-breed">泰迪</span>
+                </div>
+                <div class="friend-owner">主人：球球麻麻</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot online"></span>
+                <span>在线</span>
+            </div>
+        </div>
+
+        <div class="section-letter">T</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐈</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">团子</span>
+                    <span class="friend-breed">英短</span>
+                </div>
+                <div class="friend-owner">主人：猫奴小王</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot online"></span>
+                <span>在线</span>
+            </div>
+        </div>
+
+        <div class="section-letter">W</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐕‍🦺</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">旺财</span>
+                    <span class="friend-breed">柯基</span>
+                </div>
+                <div class="friend-owner">主人：旺财主人</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot offline"></span>
+                <span>3小时前</span>
+            </div>
+        </div>
+
+        <div class="section-letter">X</div>
+        <div class="friend-item">
+            <div class="friend-avatar">🐹</div>
+            <div class="friend-info">
+                <div class="friend-name-row">
+                    <span class="friend-name">小团子</span>
+                    <span class="friend-breed">仓鼠</span>
+                </div>
+                <div class="friend-owner">主人：仓鼠控</div>
+            </div>
+            <div class="friend-status">
+                <span class="status-dot offline"></span>
+                <span>2天前</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <button class="bottom-btn" onclick="location.href='pet-friend-add.html'">🐾 添加宠物好友</button>
+</div>
+</body>
+</html>

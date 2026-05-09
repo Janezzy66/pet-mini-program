@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遛宠打卡</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "微软雅黑", sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .page {
+            width: 375px;
+            min-height: 667px;
+            background: #FFF9F0;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+        /* 顶部导航 */
+        .nav-bar {
+            height: 56px;
+            background: linear-gradient(135deg, #FF9A5C, #FFD966);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        /* 连续打卡展示区 */
+        .streak-section {
+            text-align: center;
+            padding: 30px 20px 20px;
+            position: relative;
+        }
+        .streak-ring {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(#FF9A5C 0deg, #FFD966 180deg, #ffe8c2 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            animation: rotate-ring 8s linear infinite;
+            box-shadow: 0 4px 20px rgba(255, 154, 92, 0.3);
+        }
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .streak-ring-inner {
+            width: 136px;
+            height: 136px;
+            border-radius: 50%;
+            background: #FFF9F0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: rotate-ring-reverse 8s linear infinite;
+        }
+        @keyframes rotate-ring-reverse {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        .streak-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+        .streak-number .fire {
+            font-size: 28px;
+        }
+        .streak-label {
+            font-size: 14px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .total-days {
+            font-size: 13px;
+            color: #999;
+            margin-top: 12px;
+        }
+        /* 今日打卡状态卡片 */
+        .today-card {
+            margin: 16px 16px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(255, 154, 92, 0.1);
+        }
+        .today-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 14px;
+        }
+        .checkin-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .checkin-item:last-of-type {
+            border-bottom: none;
+        }
+        .checkin-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkin-icon-done {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4CAF50;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .checkin-icon-pending {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ccc;
+        }
+        .checkin-text-done {
+            font-size: 14px;
+            color: #4CAF50;
+            font-weight: 500;
+        }
+        .checkin-text-pending {
+            font-size: 14px;
+            color: #999;
+        }
+        .btn-go-checkin {
+            padding: 4px 12px;
+            background: #FF9A5C;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            margin-top: 14px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, #FF9A5C, #FFD966);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        /* 打卡日历 */
+        .calendar-section {
+            margin: 16px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(255, 154, 92, 0.1);
+        }
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .calendar-header .arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #FFF9F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #FF9A5C;
+            cursor: pointer;
+            border: 1px solid #ffe0c8;
+        }
+        .calendar-header .month-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .weekday-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .weekday-row span {
+            font-size: 12px;
+            color: #999;
+            padding: 4px 0;
+        }
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+        .day-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 13px;
+            color: #666;
+            position: relative;
+        }
+        .day-cell.empty {
+            visibility: hidden;
+        }
+        .day-cell.full-check {
+            background: linear-gradient(135deg, #FF9A5C, #FFD966);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 154, 92, 0.3);
+        }
+        .day-cell.full-check::after {
+            content: '✓';
+            position: absolute;
+            bottom: 2px;
+            font-size: 8px;
+            color: #fff;
+        }
+        .day-cell.half-check {
+            background: #fff3e6;
+            color: #FF9A5C;
+            font-weight: 500;
+            border: 1.5px solid #FFD966;
+        }
+        .day-cell.today {
+            border: 2px solid #7EC8E3;
+            font-weight: 600;
+            color: #7EC8E3;
+        }
+        .day-cell.today.half-check {
+            border: 2px solid #7EC8E3;
+            background: #fff3e6;
+            color: #FF9A5C;
+        }
+        .day-cell.future {
+            color: #ccc;
+        }
+        /* 本周统计 */
+        .week-stat {
+            margin: 16px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 12px rgba(255, 154, 92, 0.1);
+        }
+        .week-stat-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .week-dots {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .week-dot-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .week-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #999;
+        }
+        .week-dot.active {
+            background: linear-gradient(135deg, #FF9A5C, #FFD966);
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(255, 154, 92, 0.3);
+        }
+        .week-dot-label {
+            font-size: 10px;
+            color: #999;
+        }
+        /* 底部按钮 */
+        .bottom-btn-area {
+            position: fixed;
+            bottom: 0;
+            width: 375px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 24px;
+            background: linear-gradient(transparent, #FFF9F0 30%);
+            padding-top: 30px;
+        }
+        .btn-start {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #FF9A5C, #FFD966);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 154, 92, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-start:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- 顶部导航 -->
+        <div class="nav-bar">遛宠打卡 🐾</div>
+
+        <!-- 连续打卡展示区 -->
+        <div class="streak-section">
+            <div class="streak-ring">
+                <div class="streak-ring-inner">
+                    <div class="streak-number">连续 7 天 <span class="fire">🔥</span></div>
+                    <div class="streak-label">持续努力中</div>
+                </div>
+            </div>
+            <div class="total-days">累计打卡 23 天</div>
+        </div>
+
+        <!-- 今日打卡状态卡片 -->
+        <div class="today-card">
+            <div class="today-card-title">今日打卡 (1/2)</div>
+            <div class="checkin-item">
+                <div class="checkin-left">
+                    <div class="checkin-icon-done">✓</div>
+                    <span class="checkin-text-done">第1次：✅ 已打卡 08:32</span>
+                </div>
+            </div>
+            <div class="checkin-item">
+                <div class="checkin-left">
+                    <div class="checkin-icon-pending">⭕</div>
+                    <span class="checkin-text-pending">第2次：待打卡</span>
+                </div>
+                <button class="btn-go-checkin" onclick="location.href='walk-checkin-do.html'">去打卡</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- 打卡日历 -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <div class="arrow">&lt;</div>
+                <div class="month-title">2026年5月</div>
+                <div class="arrow">&gt;</div>
+            </div>
+            <div class="weekday-row">
+                <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+            </div>
+            <div class="days-grid">
+                <!-- 5月1日是周五，前面空4格 -->
+                <div class="day-cell empty"></div>
+                <div class="day-cell empty"></div>
+                <div class="day-cell empty"></div>
+                <div class="day-cell empty"></div>
+                <div class="day-cell empty"></div>
+                <div class="day-cell full-check">1</div>
+                <div class="day-cell full-check">2</div>
+                <div class="day-cell full-check">3</div>
+                <div class="day-cell full-check">4</div>
+                <div class="day-cell full-check">5</div>
+                <div class="day-cell full-check">6</div>
+                <div class="day-cell full-check">7</div>
+                <div class="day-cell full-check">8</div>
+                <div class="day-cell today half-check">9</div>
+                <div class="day-cell future">10</div>
+                <div class="day-cell future">11</div>
+                <div class="day-cell future">12</div>
+                <div class="day-cell future">13</div>
+                <div class="day-cell future">14</div>
+                <div class="day-cell future">15</div>
+                <div class="day-cell future">16</div>
+                <div class="day-cell future">17</div>
+                <div class="day-cell future">18</div>
+                <div class="day-cell future">19</div>
+                <div class="day-cell future">20</div>
+                <div class="day-cell future">21</div>
+                <div class="day-cell future">22</div>
+                <div class="day-cell future">23</div>
+                <div class="day-cell future">24</div>
+                <div class="day-cell future">25</div>
+                <div class="day-cell future">26</div>
+                <div class="day-cell future">27</div>
+                <div class="day-cell future">28</div>
+                <div class="day-cell future">29</div>
+                <div class="day-cell future">30</div>
+                <div class="day-cell future">31</div>
+            </div>
+        </div>
+
+        <!-- 本周统计 -->
+        <div class="week-stat">
+            <div class="week-stat-title">本周 6/7 天已打卡 💪</div>
+            <div class="week-dots">
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">一</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">二</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">三</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">四</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">五</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot active">✓</div>
+                    <span class="week-dot-label">六</span>
+                </div>
+                <div class="week-dot-item">
+                    <div class="week-dot">-</div>
+                    <span class="week-dot-label">日</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="bottom-btn-area">
+            <button class="btn-start" onclick="location.href='walk-checkin-do.html'">开始遛宠打卡 🐕</button>
+        </div>
+    </div>
+</body>
+</html>

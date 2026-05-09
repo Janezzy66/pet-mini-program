@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附近萌宠 - 宠物小程序</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+  padding: 20px 0;
+}
+.phone-frame {
+  width: 375px;
+  min-height: 667px;
+  background: #FFF9F0;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 70px;
+}
+
+/* === Nav Bar === */
+.nav-bar {
+  height: 50px;
+  background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* === My Status Bar === */
+.my-status-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0ece6;
+  gap: 10px;
+  z-index: 40;
+}
+.my-pet-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE8D6, #FFD966);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(255,154,92,0.2);
+  flex-shrink: 0;
+}
+.my-pet-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+.my-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #E8F5E9;
+  color: #4CAF50;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.online-dot {
+  width: 6px;
+  height: 6px;
+  background: #4CAF50;
+  border-radius: 50%;
+  animation: pulse-green 1.5s infinite;
+}
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.4); }
+}
+.status-switch {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.status-switch .label {
+  font-size: 11px;
+  color: #4CAF50;
+  font-weight: 500;
+}
+.toggle-track {
+  width: 42px;
+  height: 24px;
+  background: #4CAF50;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.toggle-thumb {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: transform 0.3s;
+}
+
+/* === Map Area === */
+.map-area {
+  height: 400px;
+  background: #e8efe5;
+  position: relative;
+  overflow: hidden;
+}
+/* Simulated map roads */
+.map-road {
+  position: absolute;
+  background: #d5d5d0;
+  border-radius: 2px;
+}
+.map-road.h1 { width: 100%; height: 3px; top: 120px; }
+.map-road.h2 { width: 100%; height: 4px; top: 250px; }
+.map-road.h3 { width: 70%; height: 2px; top: 330px; left: 15%; }
+.map-road.v1 { width: 3px; height: 100%; left: 100px; }
+.map-road.v2 { width: 4px; height: 100%; left: 240px; }
+.map-road.v3 { width: 2px; height: 60%; left: 320px; top: 20%; }
+
+/* Park green zones */
+.park-zone {
+  position: absolute;
+  background: rgba(139, 195, 74, 0.25);
+  border-radius: 20px;
+  border: 1.5px dashed rgba(139, 195, 74, 0.4);
+}
+.park-zone.p1 { width: 110px; height: 80px; top: 140px; left: 30px; }
+.park-zone.p2 { width: 80px; height: 60px; top: 50px; left: 250px; }
+.park-zone.p3 { width: 100px; height: 50px; top: 280px; left: 160px; }
+.park-label {
+  position: absolute;
+  font-size: 10px;
+  color: rgba(76,175,80,0.7);
+  font-weight: 500;
+}
+.park-label.l1 { top: 172px; left: 52px; }
+.park-label.l2 { top: 72px; left: 264px; }
+.park-label.l3 { top: 298px; left: 182px; }
+
+/* My location marker */
+.my-location {
+  position: absolute;
+  top: 190px;
+  left: 175px;
+  z-index: 10;
+}
+.my-location-dot {
+  width: 16px;
+  height: 16px;
+  background: #2196F3;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.4);
+  position: relative;
+}
+.my-location-dot::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 32px;
+  height: 32px;
+  background: rgba(33,150,243,0.15);
+  border-radius: 50%;
+  animation: loc-pulse 2s infinite;
+}
+.my-location-label {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #2196F3;
+  font-weight: 600;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.9);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+@keyframes loc-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Pet markers on map */
+.pet-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.pet-marker:hover { transform: scale(1.15); z-index: 15; }
+.marker-bubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+  border: 3px solid #FF9A5C;
+  position: relative;
+}
+.marker-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #FF9A5C;
+}
+.marker-online {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  background: #4CAF50;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.marker-name {
+  font-size: 10px;
+  color: #333;
+  font-weight: 600;
+  margin-top: 4px;
+  background: rgba(255,255,255,0.9);
+  padding: 1px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.marker-status {
+  font-size: 9px;
+  color: #666;
+  background: rgba(255,255,255,0.85);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+/* Map control buttons */
+.map-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 20;
+}
+.map-btn {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.map-btn:hover { transform: scale(1.1); }
+
+/* Pet count badge on map */
+.map-count-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255,255,255,0.95);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #FF9A5C;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.map-count-badge .cnt-dot {
+  width: 6px;
+  height: 6px;
+  background: #4CAF50;
+  border-radius: 50%;
+}
+
+/* === Nearby List Panel === */
+.nearby-panel {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  margin-top: -16px;
+  position: relative;
+  z-index: 30;
+  padding-bottom: 10px;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+}
+.panel-handle {
+  width: 36px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 0 auto;
+  padding-top: 0;
+  position: relative;
+  top: 10px;
+}
+.panel-title {
+  padding: 22px 20px 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.panel-title .count {
+  font-size: 13px;
+  color: #FF9A5C;
+  font-weight: 500;
+}
+
+/* Horizontal pet cards scroll */
+.pet-scroll {
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pet-scroll::-webkit-scrollbar { display: none; }
+
+.nearby-pet-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: #FFF9F0;
+  border-radius: 16px;
+  padding: 14px 16px 12px;
+  margin-right: 10px;
+  min-width: 110px;
+  box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  vertical-align: top;
+  text-align: center;
+}
+.nearby-pet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255,154,92,0.18);
+}
+.nearby-pet-card:last-child { margin-right: 0; }
+.nearby-avatar-wrap {
+  position: relative;
+  margin-bottom: 8px;
+}
+.nearby-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE8D6, #FFD966);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(255,154,92,0.2);
+}
+.nearby-online-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background: #4CAF50;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.nearby-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+.nearby-dist {
+  font-size: 11px;
+  color: #FF9A5C;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+.nearby-status {
+  font-size: 10px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* === TabBar === */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  width: 375px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  border-top: 1px solid #f0ebe4;
+  z-index: 100;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+}
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+}
+.tab-item:hover { transform: scale(1.08); }
+.tab-item .tab-icon { font-size: 22px; }
+.tab-item .tab-label { font-size: 10px; color: #999; font-weight: 500; }
+.tab-item.active .tab-label { color: #FF9A5C; font-weight: 600; }
+.tab-item.active {
+  position: relative;
+}
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: #FF9A5C;
+  border-radius: 2px;
+}
+
+/* === Status setting entry === */
+.status-entry-btn {
+  position: fixed;
+  bottom: 76px;
+  right: calc(50% - 375px/2 + 16px);
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #FF9A5C, #FFD966);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 16px rgba(255,154,92,0.4);
+  cursor: pointer;
+  z-index: 90;
+  transition: transform 0.2s;
+}
+.status-entry-btn:hover { transform: scale(1.1); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Nav Bar -->
+  <div class="nav-bar">附近萌宠 🐾</div>
+
+  <!-- My Status Bar -->
+  <div class="my-status-bar">
+    <div class="my-pet-avatar">🐕</div>
+    <div>
+      <div class="my-pet-name">豆豆</div>
+    </div>
+    <div class="my-status-tag">
+      <span class="online-dot"></span>
+      🦮 遛弯中
+    </div>
+    <div class="status-switch">
+      <span class="label">在线</span>
+      <div class="toggle-track">
+        <div class="toggle-thumb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Area -->
+  <div class="map-area">
+    <!-- Simulated roads -->
+    <div class="map-road h1"></div>
+    <div class="map-road h2"></div>
+    <div class="map-road h3"></div>
+    <div class="map-road v1"></div>
+    <div class="map-road v2"></div>
+    <div class="map-road v3"></div>
+
+    <!-- Park zones -->
+    <div class="park-zone p1"></div>
+    <div class="park-zone p2"></div>
+    <div class="park-zone p3"></div>
+    <span class="park-label l1">🌳 朝阳公园</span>
+    <span class="park-label l2">🌿 小花园</span>
+    <span class="park-label l3">🌳 社区绿地</span>
+
+    <!-- My location -->
+    <div class="my-location">
+      <div class="my-location-dot"></div>
+      <div class="my-location-label">📍 我的位置</div>
+    </div>
+
+    <!-- Pet markers -->
+    <div class="pet-marker" style="top: 85px; left: 55px;" onclick="location.href='pet-radar-profile.html'">
+      <div class="marker-bubble">🐕<span class="marker-online"></span></div>
+      <span class="marker-name">豆豆</span>
+    </div>
+
+    <div class="pet-marker" style="top: 145px; left: 260px;">
+      <div class="marker-bubble">🐈<span class="marker-online"></span></div>
+      <span class="marker-name">团子</span>
+    </div>
+
+    <div class="pet-marker" style="top: 60px; left: 160px;">
+      <div class="marker-bubble">🐩<span class="marker-online"></span></div>
+      <span class="marker-name">球球</span>
+    </div>
+
+    <div class="pet-marker" style="top: 220px; left: 80px;">
+      <div class="marker-bubble">🐕‍🦺<span class="marker-online"></span></div>
+      <span class="marker-name">旺财</span>
+    </div>
+
+    <div class="pet-marker" style="top: 300px; left: 280px;">
+      <div class="marker-bubble">🐱<span class="marker-online"></span></div>
+      <span class="marker-name">咪咪</span>
+    </div>
+
+    <div class="pet-marker" style="top: 340px; left: 50px;">
+      <div class="marker-bubble">🐕<span class="marker-online"></span></div>
+      <span class="marker-name">大黄</span>
+      <span class="marker-status">在草坪玩耍</span>
+    </div>
+
+    <!-- Map controls -->
+    <div class="map-controls">
+      <div class="map-btn">🔄</div>
+      <div class="map-btn">📍</div>
+    </div>
+
+    <!-- Online count badge -->
+    <div class="map-count-badge">
+      <span class="cnt-dot"></span>
+      附近 6 只萌宠在线
+    </div>
+  </div>
+
+  <!-- Nearby Online Panel -->
+  <div class="nearby-panel">
+    <div class="panel-handle"></div>
+    <div class="panel-title">
+      🐾 附近在线的小可爱们 <span class="count">（6只）</span>
+    </div>
+    <div class="pet-scroll">
+      <div class="nearby-pet-card" onclick="location.href='pet-radar-profile.html'">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐕</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">豆豆</div>
+        <div class="nearby-dist">200m</div>
+        <div class="nearby-status">🦮 遛弯中</div>
+      </div>
+      <div class="nearby-pet-card">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐕‍🦺</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">旺财</div>
+        <div class="nearby-dist">150m</div>
+        <div class="nearby-status">🦮 遛弯中</div>
+      </div>
+      <div class="nearby-pet-card">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐈</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">团子</div>
+        <div class="nearby-dist">350m</div>
+        <div class="nearby-status">🌳 在公园晒太阳</div>
+      </div>
+      <div class="nearby-pet-card">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐩</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">球球</div>
+        <div class="nearby-dist">500m</div>
+        <div class="nearby-status">🎾 在玩飞盘</div>
+      </div>
+      <div class="nearby-pet-card">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐱</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">咪咪</div>
+        <div class="nearby-dist">800m</div>
+        <div class="nearby-status">🏠 窗台发呆</div>
+      </div>
+      <div class="nearby-pet-card">
+        <div class="nearby-avatar-wrap">
+          <div class="nearby-avatar">🐕</div>
+          <span class="nearby-online-dot"></span>
+        </div>
+        <div class="nearby-name">大黄</div>
+        <div class="nearby-dist">1.2km</div>
+        <div class="nearby-status">🦮 遛弯中</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Floating status setting button -->
+<div class="status-entry-btn" onclick="location.href='pet-radar-status.html'">⚙️</div>
+
+<!-- TabBar -->
+<div class="tabbar">
+  <a class="tab-item" href="home.html">
+    <span class="tab-icon">🏠</span>
+    <span class="tab-label">首页</span>
+  </a>
+  <a class="tab-item" href="nearby.html">
+    <span class="tab-icon">📍</span>
+    <span class="tab-label">周边</span>
+  </a>
+  <a class="tab-item active" href="pet-radar.html">
+    <span class="tab-icon">🐾</span>
+    <span class="tab-label">附近萌宠</span>
+  </a>
+  <a class="tab-item" href="community.html">
+    <span class="tab-icon">💬</span>
+    <span class="tab-label">社区</span>
+  </a>
+  <a class="tab-item" href="profile.html">
+    <span class="tab-icon">👤</span>
+    <span class="tab-label">我的</span>
+  </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遛宠中</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "微软雅黑", sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .page {
+            width: 375px;
+            min-height: 667px;
+            background: #FFF9F0;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 120px;
+        }
+        /* 顶部导航 */
+        .nav-bar {
+            height: 56px;
+            background: linear-gradient(135deg, #4CAF50, #7EC8E3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-back {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        /* 计时器区域 */
+        .timer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 20px;
+        }
+        .timer-ring {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(76, 175, 80, 0.15);
+        }
+        .timer-ring::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 0deg, #7EC8E3 120deg, #FFD966 240deg, #4CAF50 360deg);
+            z-index: -1;
+            animation: timer-spin 4s linear infinite;
+        }
+        @keyframes timer-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .timer-ring::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .timer-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .timer-time {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-distance {
+            font-size: 15px;
+            color: #666;
+            margin-top: 8px;
+        }
+        .timer-distance span {
+            color: #4CAF50;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .timer-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 4px 12px;
+            background: #e8f5e9;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #4CAF50;
+        }
+        .timer-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: blink 1s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        /* 宠物信息 */
+        .pet-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 12px 20px;
+        }
+        .pet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD966, #FF9A5C);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .pet-info-text {
+            font-size: 15px;
+            color: #666;
+        }
+        .pet-info-text span {
+            color: #FF9A5C;
+            font-weight: 600;
+        }
+        /* 轨迹模拟 */
+        .map-area {
+            margin: 0 16px;
+            height: 160px;
+            background: #e8f5e9;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(76, 175, 80, 0.1);
+        }
+        .map-area::before {
+            content: '🗺️ 遛宠轨迹';
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            font-size: 12px;
+            color: #4CAF50;
+            background: rgba(255,255,255,0.9);
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+        .map-path {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+        }
+        .map-path svg {
+            width: 100%;
+            height: 80px;
+            position: absolute;
+            top: -40px;
+        }
+        .map-path svg path {
+            fill: none;
+            stroke: #FF9A5C;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 8 4;
+            animation: dash-move 2s linear infinite;
+        }
+        @keyframes dash-move {
+            from { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: -24; }
+        }
+        .map-pin-start {
+            position: absolute;
+            bottom: 50px;
+            left: 12%;
+            font-size: 18px;
+        }
+        .map-pin-end {
+            position: absolute;
+            bottom: 60px;
+            right: 15%;
+            font-size: 18px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        /* 拍照区域 */
+        .photo-section {
+            margin: 20px 16px;
+        }
+        .photo-btn {
+            width: 100%;
+            height: 44px;
+            border: 2px dashed #FFD966;
+            border-radius: 16px;
+            background: #fffbf0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #FF9A5C;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .photo-thumbnails {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .photo-thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffe0c8, #FFD966);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(255, 154, 92, 0.15);
+        }
+        /* 底部按钮 */
+        .bottom-area {
+            position: fixed;
+            bottom: 0;
+            width: 375px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 24px;
+            background: linear-gradient(transparent, #FFF9F0 30%);
+            padding-top: 30px;
+            text-align: center;
+        }
+        .btn-finish {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-finish:active {
+            transform: scale(0.96);
+        }
+        .bottom-tip {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- 顶部导航 -->
+        <div class="nav-bar">
+            <span class="nav-back" onclick="location.href='walk-checkin.html'">←</span>
+            遛宠中... 🐾
+        </div>
+
+        <!-- 计时器区域 -->
+        <div class="timer-section">
+            <div class="timer-ring">
+                <div class="timer-content">
+                    <div class="timer-time">00:23:15</div>
+                    <div class="timer-distance">已遛 <span>1.2</span> km</div>
+                    <div class="timer-status">
+                        <span class="dot"></span>
+                        记录中
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 宠物信息 -->
+        <div class="pet-info">
+            <div class="pet-avatar">🐕</div>
+            <div class="pet-info-text">和 <span>豆豆</span> 一起遛弯~</div>
+        </div>
+
+        <!-- 轨迹模拟 -->
+        <div class="map-area">
+            <div class="map-path">
+                <svg viewBox="0 0 300 80">
+                    <path d="M 10,60 Q 60,10 110,50 T 200,30 T 290,45" />
+                </svg>
+            </div>
+            <div class="map-pin-start">📍</div>
+            <div class="map-pin-end">🐕</div>
+        </div>
+
+        <!-- 拍照区域 -->
+        <div class="photo-section">
+            <div class="photo-btn">📷 记录美好瞬间</div>
+            <div class="photo-thumbnails">
+                <div class="photo-thumb">🌳</div>
+                <div class="photo-thumb">🐾</div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="bottom-area">
+            <button class="btn-finish" onclick="location.href='walk-checkin.html'">完成打卡 ✓</button>
+            <div class="bottom-tip">每次遛宠至少15分钟才可打卡哦~</div>
+        </div>
+    </div>
+</body>
+</html>
