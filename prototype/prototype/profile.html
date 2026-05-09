@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人中心</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 60px; }
+.profile-header { background: linear-gradient(135deg, #FF9A5C, #FFD966); padding: 40px 16px 30px; text-align: center; border-radius: 0 0 24px 24px; }
+.avatar { width: 72px; height: 72px; background: #fff; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.nickname { font-size: 18px; color: #fff; font-weight: 700; }
+.signature { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 6px; }
+.pet-section { padding: 16px; }
+.pet-section-title { font-size: 14px; color: #333; font-weight: 600; margin-bottom: 10px; }
+.pet-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.pet-scroll::-webkit-scrollbar { display: none; }
+.pet-mini-card { width: 80px; flex-shrink: 0; text-align: center; background: #fff; border-radius: 12px; padding: 12px 8px; box-shadow: 0 2px 8px rgba(255,154,92,0.08); }
+.pet-mini-card .emoji { font-size: 28px; margin-bottom: 4px; }
+.pet-mini-card .name { font-size: 12px; color: #666; }
+.func-list { margin: 0 16px; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); overflow: hidden; }
+.func-item { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f5f0ea; cursor: pointer; }
+.func-item:last-child { border-bottom: none; }
+.func-item .icon { font-size: 20px; margin-right: 12px; }
+.func-item .label { flex: 1; font-size: 14px; color: #333; }
+.func-item .arrow { font-size: 14px; color: #ccc; }
+.func-item .badge { background: #FF9A5C; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-right: 8px; }
+.tabbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 375px; height: 48px; background: #fff; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #f0ece6; z-index: 100; }
+.tabbar-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #999; cursor: pointer; }
+.tabbar-item .icon { font-size: 20px; margin-bottom: 2px; }
+.tabbar-item.active { color: #FF9A5C; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="profile-header">
+    <div class="avatar">😸</div>
+    <div class="nickname">铲屎官小明</div>
+    <div class="signature">有猫有狗，人生赢家~</div>
+  </div>
+  <div class="pet-section">
+    <div class="pet-section-title">我的宠物</div>
+    <div class="pet-scroll">
+      <div class="pet-mini-card"><div class="emoji">🐱</div><div class="name">咪咪</div></div>
+      <div class="pet-mini-card"><div class="emoji">🐶</div><div class="name">豆豆</div></div>
+      <div class="pet-mini-card"><div class="emoji">🐰</div><div class="name">小白</div></div>
+    </div>
+  </div>
+  <div class="func-list">
+    <div class="func-item"><span class="icon">⭐</span><span class="label">我的收藏</span><span class="arrow">›</span></div>
+    <div class="func-item"><span class="icon">📝</span><span class="label">我的发布</span><span class="arrow">›</span></div>
+    <div class="func-item"><span class="icon">🎉</span><span class="label">我参与的聚会</span><span class="arrow">›</span></div>
+    <div class="func-item"><span class="icon">🍽️</span><span class="label">我的喂养订单</span><span class="arrow">›</span></div>
+    <div class="func-item"><span class="icon">🔔</span><span class="label">消息通知</span><span class="badge">3</span><span class="arrow">›</span></div>
+    <div class="func-item"><span class="icon">⚙️</span><span class="label">设置</span><span class="arrow">›</span></div>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tabbar-item"><span class="icon">🏠</span>首页</div>
+  <div class="tabbar-item"><span class="icon">📍</span>周边</div>
+  <div class="tabbar-item"><span class="icon">🎉</span>聚会</div>
+  <div class="tabbar-item"><span class="icon">💬</span>社区</div>
+  <div class="tabbar-item active"><span class="icon">👤</span>我的</div>
+</div>
+</body>
+</html>

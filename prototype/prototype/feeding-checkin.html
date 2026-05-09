@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>喂养打卡</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.nav-bar { height: 44px; background: #FF9A5C; display: flex; align-items: center; padding: 0 16px; color: #fff; font-size: 17px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+.nav-bar .back { margin-right: 12px; font-size: 20px; cursor: pointer; }
+.task-info { background: #fff; margin: 16px; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.task-day { font-size: 18px; color: #333; font-weight: 700; }
+.task-pet { font-size: 14px; color: #999; margin-top: 6px; }
+.checkin-circle-wrap { display: flex; justify-content: center; padding: 30px 0; }
+.checkin-circle { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, #FF9A5C, #FFD966); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 24px rgba(255,154,92,0.3); transition: transform 0.2s; }
+.checkin-circle:hover { transform: scale(1.05); }
+.checkin-circle .icon { font-size: 40px; margin-bottom: 6px; }
+.checkin-circle .text { font-size: 14px; color: #fff; font-weight: 600; }
+.section { padding: 0 16px 16px; }
+.section-title { font-size: 14px; color: #333; font-weight: 600; margin-bottom: 10px; }
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.photo-item { aspect-ratio: 1; background: #f0ece6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.photo-add { background: #fff; border: 2px dashed #ddd; color: #ccc; font-size: 32px; cursor: pointer; }
+.textarea-field { width: 100%; min-height: 100px; border: 1px solid #eee; border-radius: 12px; padding: 14px; font-size: 14px; background: #fff; outline: none; resize: vertical; line-height: 1.6; margin-top: 10px; }
+.submit-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 44px; background: #FF9A5C; color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,154,92,0.4); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="nav-bar"><span class="back">←</span>喂养打卡</div>
+  <div class="task-info">
+    <div class="task-day">第3天 · 第1次喂养</div>
+    <div class="task-pet">🐱 咪咪（布偶猫）</div>
+  </div>
+  <div class="checkin-circle-wrap">
+    <div class="checkin-circle">
+      <span class="icon">🐾</span>
+      <span class="text">到达打卡</span>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">上传照片</div>
+    <div class="photo-grid">
+      <div class="photo-item">📷</div>
+      <div class="photo-item">📷</div>
+      <div class="photo-item photo-add">➕</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">文字备注</div>
+    <textarea class="textarea-field" placeholder="记录一下宠物状态吧~"></textarea>
+  </div>
+</div>
+<button class="submit-btn">提交打卡</button>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物朋友圈</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, "微软雅黑", sans-serif;
+        }
+        .page {
+            width: 375px;
+            min-height: 667px;
+            background: #FFF9F0;
+            position: relative;
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
+        /* 顶部导航 */
+        .nav-bar {
+            height: 44px;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        /* 封面区域 */
+        .cover-area {
+            height: 120px;
+            background: linear-gradient(135deg, #FF9A5C, #FFD966, #FF9A5C);
+            position: relative;
+            overflow: hidden;
+        }
+        .cover-area::before {
+            content: "🐾🌤️✨";
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            opacity: 0.5;
+        }
+        .cover-area::after {
+            content: "🌈🐕🐈";
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            font-size: 20px;
+            opacity: 0.4;
+        }
+        .cover-user {
+            position: absolute;
+            bottom: -20px;
+            right: 16px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        .cover-nickname {
+            font-size: 14px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+        .cover-avatar-wrap {
+            position: relative;
+            width: 56px;
+            height: 56px;
+        }
+        .cover-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .cover-pet-mini {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #FFD966;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid #fff;
+        }
+        /* 动态列表 */
+        .moments-list {
+            padding-top: 30px;
+        }
+        .moment-item {
+            display: flex;
+            padding: 16px;
+            border-bottom: 1px solid #f0ebe5;
+            background: #FFFFFF;
+        }
+        .moment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFF3E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+        .moment-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .moment-header {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .moment-pet-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #FF9A5C;
+        }
+        .moment-owner {
+            font-size: 12px;
+            color: #999;
+        }
+        .moment-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        /* 图片区域 */
+        .moment-images {
+            margin-bottom: 8px;
+            display: grid;
+            gap: 4px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .moment-images.single {
+            grid-template-columns: 1fr;
+            max-width: 200px;
+        }
+        .moment-images.double {
+            grid-template-columns: 1fr 1fr;
+            max-width: 200px;
+        }
+        .moment-images.triple {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        .moment-images.quad {
+            grid-template-columns: 1fr 1fr;
+            max-width: 200px;
+        }
+        .img-placeholder {
+            aspect-ratio: 1;
+            background: #e8e2dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border-radius: 4px;
+        }
+        .img-placeholder.large {
+            aspect-ratio: 4/3;
+            font-size: 36px;
+        }
+        /* 时间和位置 */
+        .moment-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .moment-time-loc {
+            font-size: 12px;
+            color: #999;
+        }
+        .moment-actions {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #999;
+        }
+        .moment-action {
+            cursor: pointer;
+        }
+        /* 点赞列表 */
+        .moment-likes {
+            background: #f8f4f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .like-icon {
+            color: #FF6B6B;
+        }
+        /* 评论列表 */
+        .moment-comments {
+            background: #f8f4f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+        .comment-name {
+            color: #FF9A5C;
+            font-weight: 500;
+        }
+        /* 悬浮发布按钮 */
+        .fab-btn {
+            position: fixed;
+            bottom: 30px;
+            right: calc(50% - 375px/2 + 20px);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF9A5C, #FFB47A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 16px rgba(255,154,92,0.4);
+            cursor: pointer;
+            z-index: 200;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .fab-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!-- 顶部导航 -->
+    <div class="nav-bar">宠物圈 🐾</div>
+
+    <!-- 封面区域 -->
+    <div class="cover-area">
+        <div class="cover-user">
+            <span class="cover-nickname">豆豆一家</span>
+            <div class="cover-avatar-wrap">
+                <div class="cover-avatar">👤</div>
+                <div class="cover-pet-mini">🐕</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 动态列表 -->
+    <div class="moments-list">
+        <!-- 动态1: 豆豆 -->
+        <div class="moment-item">
+            <div class="moment-avatar">🐕</div>
+            <div class="moment-content">
+                <div class="moment-header">
+                    <span class="moment-pet-name">豆豆</span>
+                    <span class="moment-owner">· 豆豆爸</span>
+                </div>
+                <div class="moment-text">今天阳光真好，豆豆在公园跑了一整圈，开心到飞起~</div>
+                <div class="moment-images triple">
+                    <div class="img-placeholder">🐕</div>
+                    <div class="img-placeholder">🌳</div>
+                    <div class="img-placeholder">☀️</div>
+                </div>
+                <div class="moment-meta">
+                    <span class="moment-time-loc">3分钟前 · 📍朝阳公园</span>
+                    <div class="moment-actions">
+                        <span class="moment-action">❤️ 12</span>
+                        <span class="moment-action">💬 3</span>
+                    </div>
+                </div>
+                <div class="moment-likes">
+                    <span class="like-icon">❤️</span> 团子、球球、咪咪、旺财 等12位宠物觉得很赞
+                </div>
+                <div class="moment-comments">
+                    <div><span class="comment-name">团子妈妈：</span>好可爱呀！在哪里遛的~</div>
+                    <div><span class="comment-name">球球：</span>汪汪汪！（翻译：我也想去！）</div>
+                    <div><span class="comment-name">旺财主人：</span>朝阳公园确实不错，下次一起约！</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动态2: 团子 -->
+        <div class="moment-item">
+            <div class="moment-avatar">🐈</div>
+            <div class="moment-content">
+                <div class="moment-header">
+                    <span class="moment-pet-name">团子</span>
+                    <span class="moment-owner">· 猫奴小王</span>
+                </div>
+                <div class="moment-text">团子今天的睡姿又解锁新花样了😂</div>
+                <div class="moment-images single">
+                    <div class="img-placeholder large">😺💤</div>
+                </div>
+                <div class="moment-meta">
+                    <span class="moment-time-loc">25分钟前 · 🏠家里</span>
+                    <div class="moment-actions">
+                        <span class="moment-action">❤️ 8</span>
+                        <span class="moment-action">💬 5</span>
+                    </div>
+                </div>
+                <div class="moment-likes">
+                    <span class="like-icon">❤️</span> 豆豆、球球、咪咪 等8位宠物觉得很赞
+                </div>
+                <div class="moment-comments">
+                    <div><span class="comment-name">豆豆爸：</span>哈哈哈这个姿势绝了🤣</div>
+                    <div><span class="comment-name">咪咪姐姐：</span>猫猫的睡姿真的千奇百怪</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动态3: 球球 -->
+        <div class="moment-item">
+            <div class="moment-avatar">🐩</div>
+            <div class="moment-content">
+                <div class="moment-header">
+                    <span class="moment-pet-name">球球</span>
+                    <span class="moment-owner">· 球球麻麻</span>
+                </div>
+                <div class="moment-text">带球球去宠物美容啦，剪了个新造型，感觉它自己也知道变帅了🤣</div>
+                <div class="moment-images quad">
+                    <div class="img-placeholder">✂️</div>
+                    <div class="img-placeholder">🐩</div>
+                    <div class="img-placeholder">💇</div>
+                    <div class="img-placeholder">✨</div>
+                </div>
+                <div class="moment-meta">
+                    <span class="moment-time-loc">1小时前 · 📍萌宠造型屋</span>
+                    <div class="moment-actions">
+                        <span class="moment-action">❤️ 20</span>
+                        <span class="moment-action">💬 7</span>
+                    </div>
+                </div>
+                <div class="moment-likes">
+                    <span class="like-icon">❤️</span> 豆豆、团子、旺财、咪咪、大黄 等20位宠物觉得很赞
+                </div>
+                <div class="moment-comments">
+                    <div><span class="comment-name">团子妈妈：</span>也太帅了吧！这家店在哪呀求推荐</div>
+                    <div><span class="comment-name">大黄哥：</span>球球变潮狗了！帅到没朋友😎</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动态4: 旺财 -->
+        <div class="moment-item">
+            <div class="moment-avatar">🐕‍🦺</div>
+            <div class="moment-content">
+                <div class="moment-header">
+                    <span class="moment-pet-name">旺财</span>
+                    <span class="moment-owner">· 旺财主人</span>
+                </div>
+                <div class="moment-text">旺财今天状态不太好，有点蔫蔫的，明天去医院检查一下 😢</div>
+                <div class="moment-meta">
+                    <span class="moment-time-loc">2小时前</span>
+                    <div class="moment-actions">
+                        <span class="moment-action">❤️ 5</span>
+                        <span class="moment-action">💬 8</span>
+                    </div>
+                </div>
+                <div class="moment-likes">
+                    <span class="like-icon">❤️</span> 豆豆、团子、球球、咪咪、大黄 觉得很赞
+                </div>
+                <div class="moment-comments">
+                    <div><span class="comment-name">豆豆爸：</span>别担心，可能就是天气热有点懒，祝旺财早日恢复活力💪</div>
+                    <div><span class="comment-name">球球麻麻：</span>旺财加油！有什么需要帮忙的随时说</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动态5: 咪咪 -->
+        <div class="moment-item">
+            <div class="moment-avatar">🐱</div>
+            <div class="moment-content">
+                <div class="moment-header">
+                    <span class="moment-pet-name">咪咪</span>
+                    <span class="moment-owner">· 咪咪姐姐</span>
+                </div>
+                <div class="moment-text">新买的猫爬架到了！咪咪表示非常满意 ✨</div>
+                <div class="moment-images double">
+                    <div class="img-placeholder">🐱</div>
+                    <div class="img-placeholder">🏗️</div>
+                </div>
+                <div class="moment-meta">
+                    <span class="moment-time-loc">5小时前 · 🏠家里</span>
+                    <div class="moment-actions">
+                        <span class="moment-action">❤️ 15</span>
+                        <span class="moment-action">💬 4</span>
+                    </div>
+                </div>
+                <div class="moment-likes">
+                    <span class="like-icon">❤️</span> 团子、豆豆、球球 等15位宠物觉得很赞
+                </div>
+                <div class="moment-comments">
+                    <div><span class="comment-name">猫奴小王：</span>链接发一下！团子也想要~</div>
+                    <div><span class="comment-name">仓鼠控：</span>咪咪好幸福呀，我也想给小团子买个小窝</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮发布按钮 -->
+    <button class="fab-btn" onclick="location.href='pet-moments-publish.html'">📷</button>
+</div>
+</body>
+</html>

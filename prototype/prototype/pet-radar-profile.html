@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宠物详情 - 宠物小程序</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+  padding: 20px 0;
+}
+.phone-frame {
+  width: 375px;
+  min-height: 667px;
+  background: #FFF9F0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === Simulated map background === */
+.map-bg {
+  width: 100%;
+  height: 100%;
+  background: #e8efe5;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.map-bg .road {
+  position: absolute;
+  background: #d5d5d0;
+  border-radius: 2px;
+}
+.map-bg .road.h1 { width: 100%; height: 3px; top: 180px; }
+.map-bg .road.h2 { width: 100%; height: 4px; top: 350px; }
+.map-bg .road.v1 { width: 3px; height: 100%; left: 120px; }
+.map-bg .road.v2 { width: 4px; height: 100%; left: 260px; }
+.map-bg .park {
+  position: absolute;
+  width: 130px;
+  height: 90px;
+  background: rgba(139, 195, 74, 0.2);
+  border-radius: 20px;
+  top: 200px;
+  left: 40px;
+}
+/* A pet marker on map */
+.map-bg .pin {
+  position: absolute;
+  top: 160px;
+  left: 160px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 3px solid #FF9A5C;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+.map-bg .pin::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #FF9A5C;
+}
+
+/* === Overlay === */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 10;
+}
+
+/* === Bottom Sheet === */
+.bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 62%;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+}
+
+/* Drag handle */
+.drag-handle {
+  width: 36px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* Profile content */
+.profile-content {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Big avatar */
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE8D6, #FFD966);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  border: 4px solid #FF9A5C;
+  box-shadow: 0 4px 16px rgba(255,154,92,0.25);
+  margin-bottom: 12px;
+  position: relative;
+}
+.profile-avatar .online-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #4CAF50;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+/* Name and breed */
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+.profile-gender {
+  font-size: 16px;
+  color: #7EC8E3;
+  font-weight: 600;
+}
+.profile-breed {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 14px;
+}
+
+/* Status tag */
+.profile-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  color: #388E3C;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 24px;
+  margin-bottom: 10px;
+}
+
+/* Distance */
+.profile-distance {
+  font-size: 14px;
+  color: #FF9A5C;
+  font-weight: 500;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Tags */
+.profile-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.profile-tag {
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.profile-tag.t1 { background: #FFF3E8; color: #FF9A5C; }
+.profile-tag.t2 { background: #E3F2FD; color: #42A5F5; }
+.profile-tag.t3 { background: #FCE4EC; color: #EC407A; }
+
+/* Owner intro */
+.owner-section {
+  width: 100%;
+  background: #FFF9F0;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.owner-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.owner-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFD966, #FF9A5C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.owner-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+.owner-label {
+  font-size: 11px;
+  color: #FF9A5C;
+  background: #FFF3E8;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+.owner-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Action buttons */
+.action-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.btn-primary {
+  flex: 1;
+  padding: 14px 0;
+  background: linear-gradient(135deg, #FF9A5C, #FFD966);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(255,154,92,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255,154,92,0.4);
+}
+.btn-secondary {
+  flex: 0.6;
+  padding: 14px 0;
+  background: #fff;
+  color: #FF9A5C;
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid #FF9A5C;
+  border-radius: 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  background: #FFF9F0;
+}
+
+/* Privacy tip */
+.privacy-tip {
+  font-size: 11px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Back button on top */
+.back-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  z-index: 30;
+  transition: transform 0.2s;
+  text-decoration: none;
+}
+.back-btn:hover { transform: scale(1.1); }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Simulated map background -->
+  <div class="map-bg">
+    <div class="road h1"></div>
+    <div class="road h2"></div>
+    <div class="road v1"></div>
+    <div class="road v2"></div>
+    <div class="park"></div>
+    <div class="pin">🐕</div>
+  </div>
+
+  <!-- Back button -->
+  <a class="back-btn" href="pet-radar.html">←</a>
+
+  <!-- Overlay -->
+  <div class="overlay"></div>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet">
+    <div class="drag-handle"></div>
+
+    <div class="profile-content">
+      <!-- Avatar -->
+      <div class="profile-avatar">
+        🐕
+        <span class="online-badge"></span>
+      </div>
+
+      <!-- Name & Breed -->
+      <div class="profile-name-row">
+        <span class="profile-name">豆豆</span>
+        <span class="profile-gender">♂</span>
+      </div>
+      <div class="profile-breed">金毛犬 · 2岁</div>
+
+      <!-- Status -->
+      <div class="profile-status">🦮 遛弯中</div>
+
+      <!-- Distance -->
+      <div class="profile-distance">📍 距你 200m</div>
+
+      <!-- Character tags -->
+      <div class="profile-tags">
+        <span class="profile-tag t1">🧡 活泼</span>
+        <span class="profile-tag t2">💙 友好</span>
+        <span class="profile-tag t3">💗 粘人</span>
+      </div>
+
+      <!-- Owner intro -->
+      <div class="owner-section">
+        <div class="owner-header">
+          <div class="owner-avatar">👨</div>
+          <span class="owner-name">豆豆爸</span>
+          <span class="owner-label">主人</span>
+        </div>
+        <div class="owner-desc">每天傍晚6点在朝阳公园遛弯~欢迎附近的小伙伴一起来玩耍呀！豆豆很友好，喜欢交朋友 🐾</div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row">
+        <button class="btn-primary">💬 打个招呼</button>
+        <button class="btn-secondary">📍 查看位置</button>
+      </div>
+
+      <!-- Privacy tip -->
+      <div class="privacy-tip">🔒 为保护隐私，仅显示大致区域</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

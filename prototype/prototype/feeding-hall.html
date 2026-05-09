@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>接单大厅</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 60px; }
+.nav-bar { height: 44px; background: #FF9A5C; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+.publish-btn-wrap { padding: 12px 16px; }
+.publish-btn { width: 100%; height: 44px; background: #FF9A5C; color: #fff; border: none; border-radius: 24px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,154,92,0.3); }
+.filter-bar { display: flex; padding: 0 16px 12px; gap: 10px; overflow-x: auto; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-tag { padding: 6px 14px; border-radius: 20px; font-size: 12px; background: #fff; color: #666; border: 1px solid #eee; white-space: nowrap; cursor: pointer; }
+.filter-tag.active { background: #FF9A5C; color: #fff; border-color: #FF9A5C; }
+.order-list { padding: 0 16px; }
+.order-card { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.order-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pet-avatar { width: 40px; height: 40px; background: #FFD966; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.pet-info { flex: 1; }
+.pet-name { font-size: 15px; color: #333; font-weight: 600; }
+.service-tag { display: inline-block; font-size: 11px; background: #E8F4FD; color: #7EC8E3; padding: 2px 8px; border-radius: 8px; margin-top: 2px; }
+.status-tag { font-size: 11px; padding: 3px 8px; border-radius: 8px; font-weight: 500; }
+.status-green { background: #E8F8E8; color: #4CAF50; }
+.status-orange { background: #FFF3E0; color: #FF9800; }
+.status-blue { background: #E3F2FD; color: #2196F3; }
+.order-details { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.order-detail-item { font-size: 13px; color: #666; display: flex; align-items: center; gap: 6px; }
+.order-price { font-size: 22px; color: #FF9A5C; font-weight: 700; margin: 8px 0; }
+.order-action { display: flex; justify-content: flex-end; }
+.accept-btn { padding: 8px 24px; background: #FF9A5C; color: #fff; border: none; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.tabbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 375px; height: 48px; background: #fff; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #f0ece6; z-index: 100; }
+.tabbar-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #999; cursor: pointer; }
+.tabbar-item .icon { font-size: 20px; margin-bottom: 2px; }
+.tabbar-item.active { color: #FF9A5C; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="nav-bar">上门喂养</div>
+  <div class="publish-btn-wrap">
+    <button class="publish-btn">📋 发布喂养订单</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-tag active">全部</span>
+    <span class="filter-tag">🐕狗狗</span>
+    <span class="filter-tag">🐈猫咪</span>
+    <span class="filter-tag">📍距离优先</span>
+  </div>
+  <div class="order-list">
+    <div class="order-card">
+      <div class="order-header">
+        <div class="pet-avatar">🐱</div>
+        <div class="pet-info">
+          <div class="pet-name">布偶猫·咪咪</div>
+          <span class="service-tag">上门喂食</span>
+        </div>
+        <span class="status-tag status-green">待接单</span>
+      </div>
+      <div class="order-details">
+        <div class="order-detail-item">📅 5月20日-5月25日（每日2次）</div>
+        <div class="order-detail-item">📍 距离 1.2km</div>
+      </div>
+      <div class="order-price">💰 ¥200</div>
+      <div class="order-action">
+        <button class="accept-btn">立即接单</button>
+      </div>
+    </div>
+    <div class="order-card">
+      <div class="order-header">
+        <div class="pet-avatar">🐶</div>
+        <div class="pet-info">
+          <div class="pet-name">金毛·豆豆</div>
+          <span class="service-tag">上门遛狗</span>
+        </div>
+        <span class="status-tag status-blue">进行中</span>
+      </div>
+      <div class="order-details">
+        <div class="order-detail-item">📅 5月18日-5月21日（每日1次）</div>
+        <div class="order-detail-item">📍 距离 0.8km</div>
+      </div>
+      <div class="order-price">💰 ¥150</div>
+    </div>
+    <div class="order-card">
+      <div class="order-header">
+        <div class="pet-avatar">🐱</div>
+        <div class="pet-info">
+          <div class="pet-name">英短·团子</div>
+          <span class="service-tag">综合照料</span>
+        </div>
+        <span class="status-tag status-green">待接单</span>
+      </div>
+      <div class="order-details">
+        <div class="order-detail-item">📅 5月22日-5月29日（每日2次）</div>
+        <div class="order-detail-item">📍 距离 2.5km</div>
+      </div>
+      <div class="order-price">💰 ¥350</div>
+      <div class="order-action">
+        <button class="accept-btn">立即接单</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tabbar-item"><span class="icon">🏠</span>首页</div>
+  <div class="tabbar-item"><span class="icon">📍</span>周边</div>
+  <div class="tabbar-item"><span class="icon">🎉</span>聚会</div>
+  <div class="tabbar-item"><span class="icon">💬</span>社区</div>
+  <div class="tabbar-item"><span class="icon">👤</span>我的</div>
+</div>
+</body>
+</html>

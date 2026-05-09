@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单详情</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; font-family: -apple-system, "微软雅黑", sans-serif; }
+.phone { width: 375px; min-height: 667px; background: #FFF9F0; position: relative; padding-bottom: 80px; }
+.nav-bar { height: 44px; background: #FF9A5C; display: flex; align-items: center; padding: 0 16px; color: #fff; font-size: 17px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+.nav-bar .back { margin-right: 12px; font-size: 20px; cursor: pointer; }
+.progress-bar { background: #fff; padding: 20px 16px; margin: 12px 16px; border-radius: 16px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.progress-steps { display: flex; justify-content: space-between; align-items: center; position: relative; }
+.progress-line { position: absolute; top: 12px; left: 30px; right: 30px; height: 3px; background: #eee; z-index: 0; }
+.progress-line-fill { position: absolute; top: 12px; left: 30px; width: 50%; height: 3px; background: #FF9A5C; z-index: 1; }
+.step { display: flex; flex-direction: column; align-items: center; z-index: 2; }
+.step-dot { width: 24px; height: 24px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; margin-bottom: 6px; }
+.step-dot.done { background: #FF9A5C; color: #fff; }
+.step-dot.current { background: #FF9A5C; color: #fff; box-shadow: 0 0 0 4px rgba(255,154,92,0.2); }
+.step-label { font-size: 10px; color: #999; }
+.step-label.active { color: #FF9A5C; font-weight: 600; }
+.info-card { background: #fff; margin: 12px 16px; border-radius: 16px; padding: 16px; box-shadow: 0 2px 12px rgba(255,154,92,0.1); }
+.info-card-title { font-size: 14px; color: #333; font-weight: 600; margin-bottom: 12px; }
+.pet-row { display: flex; align-items: center; gap: 12px; }
+.pet-avatar { width: 48px; height: 48px; background: #FFD966; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.pet-detail .name { font-size: 15px; color: #333; font-weight: 600; }
+.pet-detail .breed { font-size: 12px; color: #999; margin-top: 2px; }
+.info-list { display: flex; flex-direction: column; gap: 8px; }
+.info-item { display: flex; justify-content: space-between; font-size: 13px; }
+.info-item .label { color: #999; }
+.info-item .value { color: #333; font-weight: 500; }
+.info-item .price { color: #FF9A5C; font-weight: 700; font-size: 16px; }
+.calendar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.cal-day { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 10px 6px; text-align: center; }
+.cal-day .date { font-size: 12px; color: #333; font-weight: 500; margin-bottom: 4px; }
+.cal-day .status { font-size: 18px; }
+.cal-day.done { border-color: #4CAF50; background: #E8F8E8; }
+.cal-day.pending { border-color: #FFD966; background: #FFFDE8; }
+.timeline { margin-top: 12px; padding-left: 20px; position: relative; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #eee; }
+.timeline-item { position: relative; margin-bottom: 20px; padding-left: 20px; }
+.timeline-item::before { content: ''; position: absolute; left: -16px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #FF9A5C; border: 2px solid #fff; box-shadow: 0 0 0 2px #FF9A5C; }
+.timeline-time { font-size: 12px; color: #999; margin-bottom: 6px; }
+.timeline-photos { display: flex; gap: 8px; margin-bottom: 6px; }
+.timeline-photo { width: 60px; height: 60px; background: #f0ece6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.timeline-note { font-size: 13px; color: #666; line-height: 1.5; }
+.submit-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 343px; height: 44px; background: #FF9A5C; color: #fff; border: none; border-radius: 24px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,154,92,0.4); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="nav-bar"><span class="back">←</span>订单详情</div>
+  <div class="progress-bar">
+    <div class="progress-steps">
+      <div class="progress-line"></div>
+      <div class="progress-line-fill"></div>
+      <div class="step"><div class="step-dot done">✓</div><span class="step-label active">待接单</span></div>
+      <div class="step"><div class="step-dot done">✓</div><span class="step-label active">已接单</span></div>
+      <div class="step"><div class="step-dot current">●</div><span class="step-label active">进行中</span></div>
+      <div class="step"><div class="step-dot">4</div><span class="step-label">已完成</span></div>
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">宠物信息</div>
+    <div class="pet-row">
+      <div class="pet-avatar">🐱</div>
+      <div class="pet-detail">
+        <div class="name">咪咪</div>
+        <div class="breed">布偶猫 · 2岁</div>
+      </div>
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">服务信息</div>
+    <div class="info-list">
+      <div class="info-item"><span class="label">服务类型</span><span class="value">上门喂食</span></div>
+      <div class="info-item"><span class="label">服务时间</span><span class="value">5月20日 - 5月25日</span></div>
+      <div class="info-item"><span class="label">每日次数</span><span class="value">2次（08:00 / 18:00）</span></div>
+      <div class="info-item"><span class="label">报酬</span><span class="value price">¥200</span></div>
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">喂养日历</div>
+    <div class="calendar">
+      <div class="cal-day done"><div class="date">5/20</div><div class="status">✅</div></div>
+      <div class="cal-day done"><div class="date">5/21</div><div class="status">✅</div></div>
+      <div class="cal-day pending"><div class="date">5/22</div><div class="status">⭕</div></div>
+      <div class="cal-day pending"><div class="date">5/23</div><div class="status">⭕</div></div>
+      <div class="cal-day pending"><div class="date">5/24</div><div class="status">⭕</div></div>
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">打卡记录</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">5月21日 18:10</div>
+        <div class="timeline-photos">
+          <div class="timeline-photo">📷</div>
+          <div class="timeline-photo">📷</div>
+        </div>
+        <div class="timeline-note">咪咪今天状态不错，主动来蹭蹭我的手，吃了满满一碗猫粮，还喝了不少水~</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">5月20日 08:15</div>
+        <div class="timeline-photos">
+          <div class="timeline-photo">📷</div>
+          <div class="timeline-photo">📷</div>
+        </div>
+        <div class="timeline-note">咪咪精神很好，吃了大半碗猫粮，水碗已更换新鲜水。猫砂已清理干净。</div>
+      </div>
+    </div>
+  </div>
+</div>
+<button class="submit-btn">🐾 去打卡</button>
+</body>
+</html>

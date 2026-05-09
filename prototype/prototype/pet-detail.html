@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宠物档案 - 宠物小程序</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, "微软雅黑", "PingFang SC", "Helvetica Neue", sans-serif;
+    padding: 20px 0;
+  }
+  .phone-frame {
+    width: 375px;
+    min-height: 667px;
+    background: #FFF9F0;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 90px;
+  }
+
+  /* === Hero Header === */
+  .hero {
+    background: linear-gradient(135deg, #FF9A5C 0%, #FFD966 100%);
+    padding: 44px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 32px 32px;
+  }
+  .hero::before {
+    content: '🐾';
+    position: absolute;
+    left: 10px;
+    top: 30px;
+    font-size: 50px;
+    opacity: 0.1;
+    transform: rotate(-15deg);
+  }
+  .hero::after {
+    content: '🐾';
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    font-size: 35px;
+    opacity: 0.1;
+    transform: rotate(20deg);
+  }
+  .hero .back {
+    position: absolute;
+    left: 16px;
+    top: 44px;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s;
+  }
+  .hero .back:hover { background: rgba(255,255,255,0.35); }
+  .hero .more-btn {
+    position: absolute;
+    right: 16px;
+    top: 44px;
+    font-size: 18px;
+    color: #fff;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+  }
+  .hero-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFE8D6, #FFFBE8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    margin: 0 auto 12px;
+    border: 5px solid rgba(255,255,255,0.5);
+    box-shadow: 0 4px 20px rgba(255,154,92,0.3);
+    animation: bounceIn 0.6s ease;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .hero-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 4px;
+  }
+  .hero-breed {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* === Info Grid === */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: -24px 20px 0;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .info-item {
+    text-align: center;
+    padding: 18px 8px 16px;
+    position: relative;
+  }
+  .info-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: #f0ebe4;
+  }
+  .info-val {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FF9A5C;
+    margin-bottom: 4px;
+  }
+  .info-label {
+    font-size: 11px;
+    color: #999;
+  }
+
+  /* === Section === */
+  .section {
+    padding: 20px;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* tags */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .tag-chip {
+    padding: 6px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .tag-chip.warm {
+    background: linear-gradient(135deg, #FFF5EC, #FFF0E0);
+    color: #FF9A5C;
+    border: 1px solid #FFE0C8;
+  }
+  .tag-chip.blue {
+    background: linear-gradient(135deg, #EDF8FF, #D6EAFF);
+    color: #4BA8D0;
+    border: 1px solid #C0E0F2;
+  }
+  .tag-chip.yellow {
+    background: linear-gradient(135deg, #FFFBF0, #FFF0CC);
+    color: #CC9A30;
+    border: 1px solid #FFEAA8;
+  }
+
+  /* === Weight Chart === */
+  .chart-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 0 20px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+  }
+  .chart-card .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .chart-card .chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+  }
+  .chart-card .chart-range {
+    font-size: 12px;
+    color: #999;
+    background: #FFF9F0;
+    padding: 3px 10px;
+    border-radius: 8px;
+  }
+  .chart-svg {
+    width: 100%;
+    height: 160px;
+  }
+
+  /* notes */
+  .note-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 20px;
+    box-shadow: 0 2px 12px rgba(255,154,92,0.1);
+    font-size: 14px;
+    color: #666;
+    line-height: 1.7;
+    border-left: 4px solid #FFD966;
+  }
+
+  /* === Bottom Actions === */
+  .action-bar {
+    position: fixed;
+    bottom: 0;
+    width: 375px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 8px));
+    background: #FFF9F0;
+    border-top: 1px solid #f0ebe4;
+    z-index: 100;
+  }
+  .btn-edit {
+    flex: 1;
+    height: 48px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #FF9A5C, #FFD966);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,154,92,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(255,154,92,0.4);
+  }
+  .btn-delete {
+    width: 48px;
+    height: 48px;
+    border: 2px solid #F0EBE4;
+    border-radius: 50%;
+    background: #fff;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .btn-delete:hover {
+    border-color: #ffb0b0;
+    color: #ff6b6b;
+    background: #fff5f5;
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="back">‹</div>
+    <div class="more-btn">⋯</div>
+    <div class="hero-avatar">🐕</div>
+    <div class="hero-name">豆豆</div>
+    <div class="hero-breed">金毛寻回犬 · 弟弟</div>
+  </div>
+
+  <!-- Info Grid -->
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-val">♂</div>
+      <div class="info-label">性别</div>
+    </div>
+    <div class="info-item">
+      <div class="info-val">3岁</div>
+      <div class="info-label">年龄</div>
+    </div>
+    <div class="info-item">
+      <div class="info-val">28kg</div>
+      <div class="info-label">体重</div>
+    </div>
+    <div class="info-item">
+      <div class="info-val">✓</div>
+      <div class="info-label">已绝育</div>
+    </div>
+  </div>
+
+  <!-- Personality Tags -->
+  <div class="section">
+    <div class="section-title">💝 性格标签</div>
+    <div class="tag-list">
+      <span class="tag-chip warm">活泼</span>
+      <span class="tag-chip blue">友好</span>
+      <span class="tag-chip yellow">粘人</span>
+      <span class="tag-chip warm">好奇</span>
+    </div>
+  </div>
+
+  <!-- Weight Trend Chart -->
+  <div class="section" style="padding-bottom: 6px;">
+    <div class="section-title">📊 体重变化趋势</div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-title">近 6 个月</span>
+      <span class="chart-range">单位: kg</span>
+    </div>
+    <svg class="chart-svg" viewBox="0 0 300 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- grid lines -->
+      <line x1="0" y1="20" x2="300" y2="20" stroke="#f0ebe4" stroke-width="0.5" stroke-dasharray="4"/>
+      <line x1="0" y1="50" x2="300" y2="50" stroke="#f0ebe4" stroke-width="0.5" stroke-dasharray="4"/>
+      <line x1="0" y1="80" x2="300" y2="80" stroke="#f0ebe4" stroke-width="0.5" stroke-dasharray="4"/>
+      <line x1="0" y1="110" x2="300" y2="110" stroke="#f0ebe4" stroke-width="0.5" stroke-dasharray="4"/>
+      <!-- y-axis labels -->
+      <text x="0" y="18" fill="#ccc" font-size="9">30</text>
+      <text x="0" y="48" fill="#ccc" font-size="9">28</text>
+      <text x="0" y="78" fill="#ccc" font-size="9">26</text>
+      <text x="0" y="108" fill="#ccc" font-size="9">24</text>
+      <!-- gradient area -->
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FF9A5C" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#FF9A5C" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      <path d="M30,90 L80,75 L130,60 L180,50 L230,45 L280,50 L280,130 L30,130 Z" fill="url(#areaGrad)"/>
+      <!-- line -->
+      <polyline points="30,90 80,75 130,60 180,50 230,45 280,50"
+        stroke="#FF9A5C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- dots -->
+      <circle cx="30" cy="90" r="4" fill="#FF9A5C" stroke="#fff" stroke-width="2"/>
+      <circle cx="80" cy="75" r="4" fill="#FF9A5C" stroke="#fff" stroke-width="2"/>
+      <circle cx="130" cy="60" r="4" fill="#FF9A5C" stroke="#fff" stroke-width="2"/>
+      <circle cx="180" cy="50" r="4" fill="#FF9A5C" stroke="#fff" stroke-width="2"/>
+      <circle cx="230" cy="45" r="5" fill="#FF9A5C" stroke="#fff" stroke-width="2.5"/>
+      <circle cx="280" cy="50" r="4" fill="#FF9A5C" stroke="#fff" stroke-width="2"/>
+      <!-- value labels -->
+      <text x="25" y="84" fill="#FF9A5C" font-size="9" font-weight="600">25.0</text>
+      <text x="75" y="69" fill="#FF9A5C" font-size="9" font-weight="600">26.0</text>
+      <text x="123" y="54" fill="#FF9A5C" font-size="9" font-weight="600">27.0</text>
+      <text x="173" y="44" fill="#FF9A5C" font-size="9" font-weight="600">27.5</text>
+      <text x="220" y="39" fill="#FF9A5C" font-size="10" font-weight="700">28.0</text>
+      <text x="273" y="44" fill="#FF9A5C" font-size="9" font-weight="600">27.8</text>
+      <!-- x-axis labels (months) -->
+      <text x="22" y="138" fill="#999" font-size="9">1月</text>
+      <text x="72" y="138" fill="#999" font-size="9">2月</text>
+      <text x="122" y="138" fill="#999" font-size="9">3月</text>
+      <text x="172" y="138" fill="#999" font-size="9">4月</text>
+      <text x="222" y="138" fill="#999" font-size="9">5月</text>
+      <text x="272" y="138" fill="#999" font-size="9">6月</text>
+    </svg>
+  </div>
+
+  <!-- Notes -->
+  <div class="section">
+    <div class="section-title">📝 备注</div>
+  </div>
+  <div class="note-card" style="margin-bottom: 24px;">
+    豆豆是家里第一只狗狗，从小就特别爱黏人。每天需要至少 1 小时的户外运动，最喜欢在草地上打滚和捡球。对陌生人友好，喜欢和小朋友玩耍。每周洗澡一次，定期做驱虫和疫苗。
+  </div>
+
+</div>
+
+<!-- Action Buttons -->
+<div class="action-bar">
+  <button class="btn-edit">✏️ 编辑档案</button>
+  <button class="btn-delete">🗑️</button>
+</div>
+
+</body>
+</html>
